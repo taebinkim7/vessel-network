@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
-from skimage.util import pad
+from skimage.util import pad, view_as_blocks
 
-def pad_image(image, new_size, pad_val):
+def pad_image(image, new_size, pad_val=0):
     """
     Pads an image to a desired size.
     Parameters
@@ -47,7 +47,7 @@ def pad_image(image, new_size, pad_val):
                              constant_values=pad_val[c])
                          for c in range(n_channels)], axis=2)
 
-def make_patches(image, patch_size):
+def make_patches(image, patch_size, pad_val=0, image_file=None):
     """
     Make patches of a desired size after properly padding the image.
     Parameters
@@ -58,10 +58,25 @@ def make_patches(image, patch_size):
         Image will be padded according to the patch_size and then split into
         patches
     pad_val: float, listlike value to pad with
+    image_file: str,
     """
     if isinstance(patch_size, numbers.Number):
         patch_size = (patch_size, patch_size)
-    new_size = (np.array(image.shape)//patch_size + 1)*patch_size
+    new_size = (np.array(image.shape[0:2])//patch_size + 1)*patch_size
+    image = pad_image(image, new_size, pad_val)
+    shape = image.shape # save original shape
+    temp_shape = shape[0:2] + (-1,) # for 2-d arrays
+    image = image.reshape(temp_shape)
+    patch_size = patch_size + (image.shape[2],)
+    patches = view_as_blocks(image, patch_size)
+    n_rows, n_cols = patches.shape[0:2]
+    for i in range(n_rows):
+        for j in range(n_cols):
+            patch = patches[i, j, 0]
+            patch = patch.reshape(shape)
+            patch_name = 'patch_r{}c{}.png'.format(i, j)
 
+    return
 
-def make_rand_patches(image, patch_size, n_patch):
+#
+# def make_rand_patches(image, patch_size, n_patch):
