@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import numbers
 from PIL import Image
 from skimage.util import pad, view_as_blocks
 
