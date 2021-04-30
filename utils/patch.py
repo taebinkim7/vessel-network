@@ -1,6 +1,7 @@
 import numpy as np
-import numbers
+from numbers import Number
 from PIL import Image
+from math import ceil, floor
 from skimage.util import pad, view_as_blocks
 
 def pad_image(image, new_size, pad_val=0):
@@ -16,13 +17,13 @@ def pad_image(image, new_size, pad_val=0):
         (new_heght, new_width)
     pad_val: float, listlike value to pad with
     """
-    if isinstance(new_size, numbers.Number):
+    if isinstance(new_size, Number):
         new_size = (new_size, new_size)
     if image.shape[0] > new_size[0]:
-        print('WARNING: image height larger than desired cnn image size')
+        print('WARNING: image height larger than desired image size')
         return image
     if image.shape[1] > new_size[1]:
-        print('WARNING: image width larger than desiered cnn image size')
+        print('WARNING: image width larger than desired image size')
         return image
 
     # width padding
@@ -40,7 +41,7 @@ def pad_image(image, new_size, pad_val=0):
     # make work with 2-d arrays
     if len(image.shape) == 2:
         pad_width = pad_width[0:2]
-    if isinstance(pad_val, numbers.Number):
+    if isinstance(pad_val, Number):
         return pad(image, pad_width, mode='constant', constant_values=pad_val)
     else:
         n_channels = image.shape[2]
@@ -65,16 +66,16 @@ def make_patches(image_file, patch_size, pad_val=0, save_dir=None):
     """
     image = np.array(Image.open(image_file))
 
-    if isinstance(patch_size, numbers.Number):
+    if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
     new_size = (np.array(image.shape[0:2])//patch_size + 1)*patch_size
     image = pad_image(image, new_size, pad_val)
 
     # make patches
-    shape = image.shape # save original shape
-    temp_shape = shape[0:2] + (-1,) # for 2-d arrays
+    temp_shape = image.shape[0:2] + (-1,) # for 2-d arrays
     image = image.reshape(temp_shape)
-    patch_size = patch_size + (image.shape[2],)
+    n_channels = image.shape[2]
+    patch_size = patch_size + (n_channels,)
     patches = view_as_blocks(image, patch_size)
 
     # save patches
@@ -82,7 +83,8 @@ def make_patches(image_file, patch_size, pad_val=0, save_dir=None):
     for i in range(n_rows):
         for j in range(n_cols):
             patch = patches[i, j, 0]
-            patch = patch.reshape(shape)
+            if patch.shape[2] == 1:
+                patch = patch.reshape(patch.shape[0:2]) # for 2-d arrays
             if save_dir is not None:
                 image_name = os.path.basename(image_file)[:-4] # omit '.png'
                 patch_file = image_name + '_patch_r{}c{}.png'.format(i, j)
