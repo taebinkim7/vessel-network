@@ -13,7 +13,7 @@ def pad_image(image, new_size, pad_val=0):
     ----------
     image (ndarray): (height, width, n_channels), (height, width)
         Image to pad
-    new_size: int, tuple, (new_heght, new_width)
+    new_size: int, tuple, (new_height, new_width)
         Image will be padded to (new_height, new_width, n_channels) or
         (new_heght, new_width)
     pad_val: float, listlike value to pad with
@@ -52,16 +52,18 @@ def pad_image(image, new_size, pad_val=0):
 
 def make_patches(image, patch_size, pad_val=0, save_dir=None):
     """
-    Make and patches of an image and save them in a dictionary.
+    Make patches of an image and save them in a dictionary.
 
     Parameters
     ----------
     image (ndarray): (height, width, n_channels), (height, width)
         Image to make patches with
-    patch_size: int, tuple, (patch_heght, patch_width)
+    patch_size: int, tuple, (patch_height, patch_width)
         Image will be padded according to the patch_size and then split into
         patches
     pad_val: float, listlike value to pad with
+    stride: int, tuple, (stride_height, stride_width)
+        Number of pixels shifts over image
     save_dir: str
         Directory to save the patches
     """
