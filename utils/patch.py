@@ -50,9 +50,9 @@ def pad_image(image, new_size, pad_val=0):
                              constant_values=pad_val[c])
                          for c in range(n_channels)], axis=2)
 
-def make_patches(image, patch_size, pad_val=0, save_dir=None):
+def make_block_patches(image, patch_size, pad_val=0, image_file=None):
     """
-    Make patches of an image and save them in a dictionary.
+    Call block view of an image and save them in a dictionary.
 
     Parameters
     ----------
@@ -77,33 +77,52 @@ def make_patches(image, patch_size, pad_val=0, save_dir=None):
     image = image.reshape(temp_shape)
     n_channels = image.shape[2]
     patch_size = patch_size + (n_channels,)
-    patches_view = view_as_blocks(image, patch_size)
+    block_view = view_as_blocks(image, patch_size)
 
-    patches = {}
+    block_patches = {}
 
-    # save patches
-    n_rows, n_cols = patches.shape[0:2]
+    # make dictionary
+    n_rows, n_cols = block_view.shape[0:2]
     for i in range(n_rows):
         for j in range(n_cols):
-            patch = patches_view[i, j, 0]
+            patch = block_view[i, j, 0]
             if patch.shape[2] == 1:
                 patch = patch.reshape(patch.shape[0:2]) # for 2-d arrays
-            patches[i, j] = patch
+            block_patches[i, j] = patch
 
-    return patches
+    return block_patches
 
-            # if save_dir is not None:
-            #     os.makedirs('save_dir', exist_ok=True)
-            #     image_name = os.path.basename(image_file)[:-4] # omit '.png'
-            #     patch_file = os.path.join(save_dir, image_name + \
-            #                               '_patch_r{}c{}.png'.format(i, j))
-            # else:
-            #     patch_file = image_file[:-4] + '_patch_r{}c{}.png'.format(i, j)
-            # Image.fromarray(patch).save(patch_file)
+
+def make_patches(image, patch_size, image_file=None):
+    """
+    Call rolling window view of an image and save them in a dictionary.
+
+    Parameters
+    ----------
+    image (ndarray): (height, width, n_channels), (height, width)
+        Image to make patches with
+    patch_size: int, tuple, (patch_height, patch_width)
+        Image will be padded according to the patch_size and then split into
+        patches
+    pad_val: float, listlike value to pad with
+    stride: int, tuple, (stride_height, stride_width)
+        Number of pixels shifts over image
+    save_dir: str
+        Directory to save the patches
+    """
+
+def aggregate_block_patches(block)
 
 # def save_patches
 
+# if save_dir is not None:
+#     os.makedirs('save_dir', exist_ok=True)
+#     image_name = os.path.basename(image_file)[:-4] # omit '.png'
+#     patch_file = os.path.join(save_dir, image_name + \
+#                               '_patch_r{}c{}.png'.format(i, j))
+# else:
+#     patch_file = image_file[:-4] + '_patch_r{}c{}.png'.format(i, j)
+# Image.fromarray(patch).save(patch_file)
 #
 # def make_rand_patches(image, patch_size, n_patch):
 #
-# def aggregate_patches()
