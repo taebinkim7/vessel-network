@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from numbers import Number
 from PIL import Image
@@ -49,14 +50,14 @@ def pad_image(image, new_size, pad_val=0):
                              constant_values=pad_val[c])
                          for c in range(n_channels)], axis=2)
 
-def make_patches(image_file, patch_size, pad_val=0, save_dir=None):
+def make_patches(image, patch_size, pad_val=0, save_dir=None):
     """
-    Make and save patches of a desired size after properly padding the image.
+    Make and patches of an image and save them in a dictionary.
 
     Parameters
     ----------
-    image_file: str
-        Path to the image file
+    image (ndarray): (height, width, n_channels), (height, width)
+        Image to make patches with
     patch_size: int, tuple, (patch_heght, patch_width)
         Image will be padded according to the patch_size and then split into
         patches
@@ -64,8 +65,6 @@ def make_patches(image_file, patch_size, pad_val=0, save_dir=None):
     save_dir: str
         Directory to save the patches
     """
-    image = np.array(Image.open(image_file))
-
     if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
     new_size = (np.array(image.shape[0:2])//patch_size + 1)*patch_size
@@ -76,21 +75,31 @@ def make_patches(image_file, patch_size, pad_val=0, save_dir=None):
     image = image.reshape(temp_shape)
     n_channels = image.shape[2]
     patch_size = patch_size + (n_channels,)
-    patches = view_as_blocks(image, patch_size)
+    patches_view = view_as_blocks(image, patch_size)
+
+    patches = {}
 
     # save patches
     n_rows, n_cols = patches.shape[0:2]
     for i in range(n_rows):
         for j in range(n_cols):
-            patch = patches[i, j, 0]
+            patch = patches_view[i, j, 0]
             if patch.shape[2] == 1:
                 patch = patch.reshape(patch.shape[0:2]) # for 2-d arrays
-            if save_dir is not None:
-                image_name = os.path.basename(image_file)[:-4] # omit '.png'
-                patch_file = image_name + '_patch_r{}c{}.png'.format(i, j)
-            else:
-                patch_file = image_file[:-4] + '_patch_r{}c{}.png'.format(i, j)
-            Image.fromarray(patch).save(patch_file)
+            patches[i, j] = patch
+
+    return patches
+
+            # if save_dir is not None:
+            #     os.makedirs('save_dir', exist_ok=True)
+            #     image_name = os.path.basename(image_file)[:-4] # omit '.png'
+            #     patch_file = os.path.join(save_dir, image_name + \
+            #                               '_patch_r{}c{}.png'.format(i, j))
+            # else:
+            #     patch_file = image_file[:-4] + '_patch_r{}c{}.png'.format(i, j)
+            # Image.fromarray(patch).save(patch_file)
+
+# def save_patches
 
 #
 # def make_rand_patches(image, patch_size, n_patch):
