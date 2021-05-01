@@ -3,7 +3,7 @@ import numpy as np
 from numbers import Number
 from PIL import Image
 from math import ceil, floor
-from skimage.util import pad, view_as_blocks
+from skimage.util import pad, view_as_blocks, view_as_windows
 
 def pad_image(image, new_size, pad_val=0):
     """
@@ -50,7 +50,7 @@ def pad_image(image, new_size, pad_val=0):
                              constant_values=pad_val[c])
                          for c in range(n_channels)], axis=2)
 
-def make_block_patches(image, patch_size, pad_val=0, image_file=None):
+def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     """
     Call block view of an image and save them in a dictionary.
 
@@ -62,8 +62,6 @@ def make_block_patches(image, patch_size, pad_val=0, image_file=None):
         Image will be padded according to the patch_size and then split into
         patches
     pad_val: float, listlike value to pad with
-    stride: int, tuple, (stride_height, stride_width)
-        Number of pixels shifts over image
     save_dir: str
         Directory to save the patches
     """
@@ -93,7 +91,7 @@ def make_block_patches(image, patch_size, pad_val=0, image_file=None):
     return block_patches
 
 
-def make_patches(image, patch_size, image_file=None):
+def make_patches(image, patch_size, step, save_dir=None):
     """
     Call rolling window view of an image and save them in a dictionary.
 
@@ -104,14 +102,14 @@ def make_patches(image, patch_size, image_file=None):
     patch_size: int, tuple, (patch_height, patch_width)
         Image will be padded according to the patch_size and then split into
         patches
-    pad_val: float, listlike value to pad with
-    stride: int, tuple, (stride_height, stride_width)
-        Number of pixels shifts over image
+    step: int
+        Number of elements to skip when moving the window forward
     save_dir: str
         Directory to save the patches
     """
 
-def aggregate_block_patches(block)
+def aggregate_block_patches(block_patches, save_dir=None):
+    
 
 # def save_patches
 
