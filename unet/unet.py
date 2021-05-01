@@ -57,9 +57,8 @@ def get_unet(input_size=(256, 256, 1), rate=0.5, pretrained_weights=None):
 
     model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
-    model.compile(optimizer=tf.keras.optimizers.Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
-
-    if(pretrained_weights):
-    	model.load_weights(pretrained_weights)
-
     return model
+
+# # plot graph of model
+# model = get_unet()
+# tf.keras.utils.plot_model(model, show_shapes=True, show_layer_names=False) # None represents the batch size
