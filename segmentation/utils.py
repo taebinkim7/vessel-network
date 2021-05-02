@@ -59,7 +59,7 @@ def pad_image(image, new_size, pad_val=0):
                          for c in range(n_channels)], axis=2)
 
 
-def make_patches(image, patch_size, step, save_dir=None):
+def make_patches(image, patch_size, step, pad_val=0, save_dir=None):
     """
     Call rolling window view of an image and save them in a dictionary.
 
