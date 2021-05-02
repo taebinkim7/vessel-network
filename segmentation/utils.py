@@ -177,28 +177,28 @@ def vessel_threshold(image, alpha=0.01):
 def get_tf_dataset(data_dir, patch_size, step, batch_size, buffer_size,
                    alpha=0.01, cut_threshold=True):
     image_files = glob(os.path.join(data_dir, 'images/*'))
-    label_files = glob(os.path.join(data_dir, 'labels/*'))
+    mask_files = glob(os.path.join(data_dir, 'masks/*'))
 
     # get patches
-    image_patches, label_patches = [], []
-    for image_file, label_file in zip(image_files, label_files):
+    image_patches, mask_patches = [], []
+    for image_file, mask_file in zip(image_files, mask_files):
     	image = np.array(Image.open(image_file)) / 255 # rescale the image
-    	label = np.array(Image.open(label_file))
+    	mask = np.array(Image.open(mask_file))
     	image_patches += make_patches(image, patch_size, STEP)
-    	label_patches += make_patches(label, patch_size, STEP)
+    	mask_patches += make_patches(mask, patch_size, STEP)
 
     # drop patches with vessel area less than the threshold
     if cut_threshold:
         vessel_idx = list(map(vessel_threshold,
-                              label_patches,
-                              [alpha for i in len(label_patches)]))
+                              mask_patches,
+                              [alpha for i in len(mask_patches)]))
         image_patches = np.array(image_patches)[vessel_idx]
-        label_patches = np.array(label_patches)[vessel_idx]
+        mask_patches = np.array(mask_patches)[vessel_idx]
 
     # get dataset
     tf_images = tf.constant(image_patches)
-    tf_labels = tf.constant(label_patches)
-    tf_dataset = tf.data.Dataset.from_tensor_slices((tf_images, tf_labels))
+    tf_masks = tf.constant(mask_patches)
+    tf_dataset = tf.data.Dataset.from_tensor_slices((tf_images, tf_masks))
     tf_dataset = tf_dataset.shuffle(buffer_size).batch(batch_size)
     tf_dataset = tf_dataset.shuffle(buffer_size)
 
@@ -207,18 +207,18 @@ def get_tf_dataset(data_dir, patch_size, step, batch_size, buffer_size,
 # set directory and get file paths
 train_data_dir = '../data/train_data'
 image_files = glob(os.path.join(train_data_dir, 'images/*'))
-label_files = glob(os.path.join(train_data_dir, 'labels/*'))
+mask_files = glob(os.path.join(train_data_dir, 'masks/*'))
 
 # get patches
-image_patches, label_patches = [], []
-for image_file, label_file in zip(image_files, label_files):
+image_patches, mask_patches = [], []
+for image_file, mask_file in zip(image_files, mask_files):
 	image = np.array(Image.open(image_file)) / 255 # rescale the image
-	label = np.array(Image.open(label_file))
+	mask = np.array(Image.open(mask_file))
 	image_patches += make_patches(image, PATCH_SIZE, STEP)
-	label_patches += make_patches(label, PATCH_SIZE, STEP)
+	mask_patches += make_patches(mask, PATCH_SIZE, STEP)
 
 # get training dataset
-train_dataset = get_dataset(image_patches, label_patches, ALPHA)
+train_dataset = get_dataset(image_patches, mask_patches, ALPHA)
 train_dataset = train_dataset.batch(BATCH_SIZE)
 train_dataset = train_dataset.shuffle(BUFFER_SIZE)
 

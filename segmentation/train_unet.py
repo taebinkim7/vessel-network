@@ -38,7 +38,7 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=ckpt_file,
 
 # train model
 model.fit(train_images,
-          train_labels,
+          train_masks,
           epochs=10,
-          validation_data=(test_images, test_labels),
+          validation_data=(test_images, test_masks),
           callbacks=[cp_callback])
