@@ -24,7 +24,7 @@ validation_dataset = get_tf_dataset(validation_data_dir, PATCH_SIZE, PATCH_SIZE,
 									BUFFER_SIZE, BATCH_SIZE, threshold=False)
 
 # get unet model
-model = get_unet()
+model = get_unet(PATCH_SIZE)
 model.compile(optimizer=tf.keras.optimizers.Adam(lr=LEARNING_RATE),
               loss='binary_crossentropy', metrics=['accuracy'])
 
