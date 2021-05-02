@@ -22,7 +22,7 @@ prediction_dir = os.path.join(test_data_dir, 'predictions')
 os.makedirs(prediction_dir, exist_ok=True)
 image_files = glob(os.path.join(test_data_dir, 'images/*'))
 
-for image_file, mask_file in zip(image_files, mask_files):
+for image_file in image_files:
     file_name = os.path.basename(image_file)
     image = np.array(Image.open(image_file))/255 # rescale the image
     old_size = image.shape[0:2]
