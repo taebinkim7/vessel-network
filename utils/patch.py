@@ -126,6 +126,7 @@ def make_patches(image, patch_size, step, save_dir=None):
     patches: ndarray
     """
 
+
 def aggregate_block_patches(block_patches, save_dir=None):
     """
     Aggregate block patches to construct an image.
@@ -139,6 +140,7 @@ def aggregate_block_patches(block_patches, save_dir=None):
     -------
     image: ndarray
     """
+
 
 
 # def save_patches
