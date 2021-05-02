@@ -11,7 +11,7 @@ ALPHA = 0.01
 BUFFER_SIZE = 10**5
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-4
-LOG_NUM = 2
+LOG_NUM = 3
 EPOCHS = 50
 
 # set directories
