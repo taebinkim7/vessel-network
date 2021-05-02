@@ -68,10 +68,10 @@ def make_patches(image, patch_size, step, save_dir=None):
     image: ndarray, {(height, width, n_channels), (height, width)}
         Image to make patches with
     patch_size: {int, tuple}, (patch_height, patch_width)
-        Image will be padded according to the patch_size and then split into
-        patches
+        Image will be padded according to the patch_size
     step: int
-        Number of elements to skip when moving the window forward
+        Number of elements to skip when moving the window forward. We only use
+        a factor of patch_size as step in this function
     save_dir: str, optional
         Directory to save the patches
 
@@ -79,8 +79,11 @@ def make_patches(image, patch_size, step, save_dir=None):
     -------
     patches_list: list
     """
+    # pad the image
     if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
+    new_size = (np.array(image.shape[0:2])//patch_size + 1)*patch_size
+    image = pad_image(image, new_size, pad_val)
 
     # make patches
     temp_shape = image.shape[0:2] + (-1,) # for 2-d arrays
@@ -116,6 +119,7 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     block_patches: dictionary
         Dictionary with block coordinates as keys and patches as values
     """
+    # pad the image
     if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
     new_size = (np.array(image.shape[0:2])//patch_size + 1)*patch_size
@@ -174,21 +178,21 @@ def aggregate_block_patches(block_patches, save_dir=None):
 def vessel_threshold(image, alpha=0.01):
     return np.sum(image)/image.size > alpha
 
-def get_tf_dataset(data_dir, patch_size, step, batch_size, buffer_size,
-                   alpha=0.01, cut_threshold=True):
+def get_tf_dataset(data_dir, patch_size, step, buffer_size, batch_size,
+                   alpha=0.01, threshold=True):
     image_files = glob(os.path.join(data_dir, 'images/*'))
     mask_files = glob(os.path.join(data_dir, 'masks/*'))
 
     # get patches
     image_patches, mask_patches = [], []
     for image_file, mask_file in zip(image_files, mask_files):
-    	image = np.array(Image.open(image_file)) / 255 # rescale the image
+    	image = np.array(Image.open(image_file))/255 # rescale the image
     	mask = np.array(Image.open(mask_file))
     	image_patches += make_patches(image, patch_size, STEP)
     	mask_patches += make_patches(mask, patch_size, STEP)
 
     # drop patches with vessel area less than the threshold
-    if cut_threshold:
+    if threshold:
         vessel_idx = list(map(vessel_threshold,
                               mask_patches,
                               [alpha for i in len(mask_patches)]))
@@ -199,28 +203,9 @@ def get_tf_dataset(data_dir, patch_size, step, batch_size, buffer_size,
     tf_images = tf.constant(image_patches)
     tf_masks = tf.constant(mask_patches)
     tf_dataset = tf.data.Dataset.from_tensor_slices((tf_images, tf_masks))
-    tf_dataset = tf_dataset.shuffle(buffer_size).batch(batch_size)
-    tf_dataset = tf_dataset.shuffle(buffer_size)
+    tf_dataset = tf_dataset.cache().shuffle(buffer_size).batch(batch_size)
 
     return tf_dataset
-
-# set directory and get file paths
-train_data_dir = '../data/train_data'
-image_files = glob(os.path.join(train_data_dir, 'images/*'))
-mask_files = glob(os.path.join(train_data_dir, 'masks/*'))
-
-# get patches
-image_patches, mask_patches = [], []
-for image_file, mask_file in zip(image_files, mask_files):
-	image = np.array(Image.open(image_file)) / 255 # rescale the image
-	mask = np.array(Image.open(mask_file))
-	image_patches += make_patches(image, PATCH_SIZE, STEP)
-	mask_patches += make_patches(mask, PATCH_SIZE, STEP)
-
-# get training dataset
-train_dataset = get_dataset(image_patches, mask_patches, ALPHA)
-train_dataset = train_dataset.batch(BATCH_SIZE)
-train_dataset = train_dataset.shuffle(BUFFER_SIZE)
 
 
 # def save_patches
