@@ -100,8 +100,8 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     for i in range(n_rows):
         for j in range(n_cols):
             patch = block_view[i, j, 0]
-            if patch.shape[2] == 1:
-                patch = patch.reshape(patch.shape[0:2]) # for 2-d arrays
+            # if patch.shape[2] == 1:
+            #     patch = patch.reshape(patch.shape[0:2]) # for 2-d arrays
             block_patches[i, j] = patch
 
     return block_patches
@@ -125,12 +125,22 @@ def make_patches(image, patch_size, step, save_dir=None):
 
     Returns
     -------
-    patches: ndarray
+    patches_list: list
     """
     if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
-    window_view = view_as_windows(image, patch_size, step)
 
+    # make patches
+    temp_shape = image.shape[0:2] + (-1,) # for 2-d arrays
+    image = image.reshape(temp_shape)
+    n_channels = image.shape[2]
+    patch_size = patch_size + (n_channels,)
+    window_view = view_as_windows(image, patch_size, step)
+    n_rows, n_cols = window_view.shape[0:2]
+    patches_list = [window_view[i, j, 0] for i in range(n_rows) \
+                                         for j in range(n_cols)]
+
+    return patches_list
 
 
 def aggregate_block_patches(block_patches, save_dir=None):
@@ -148,9 +158,9 @@ def aggregate_block_patches(block_patches, save_dir=None):
     """
     block_coords = list(block_patches.keys())
     n_rows, n_cols = block_coords[-1]
-    block_list = [[block_patches[i, j] for j in range(n_cols)] \
-                                        for i in range(n_rows)]
-    image = np.hstack(np.hstack(block_list))
+    patches_list = [[block_patches[i, j] for j in range(n_cols)] \
+                                         for i in range(n_rows)]
+    image = np.hstack(np.hstack(patches_list))
     if image.shape[2] == 1:
         image = image.reshape(image.shape[0:2]) # for 2-d arrays
 
