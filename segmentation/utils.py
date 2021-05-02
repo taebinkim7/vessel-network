@@ -174,7 +174,7 @@ def aggregate_block_patches(block_patches, old_size=None, save_dir=None):
         if isinstance(old_size, Number):
             old_size = (old_size, old_size)
         h, w = image.shape[0:2]
-        assert (old_size[0] < h) & (old_size[1] < w)
+        assert (old_size[0] <= h) & (old_size[1] <= w)
         image = image[(h - old_size[0])//2:(h + old_size[0])//2,
                       (w - old_size[1])//2:(w + old_size[1])//2, :]
 
