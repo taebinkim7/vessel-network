@@ -188,8 +188,8 @@ def get_tf_dataset(data_dir, patch_size, step, buffer_size, batch_size,
     for image_file, mask_file in zip(image_files, mask_files):
     	image = np.array(Image.open(image_file))/255 # rescale the image
     	mask = np.array(Image.open(mask_file))
-    	image_patches += make_patches(image, patch_size, STEP)
-    	mask_patches += make_patches(mask, patch_size, STEP)
+    	image_patches += make_patches(image, patch_size, step)
+    	mask_patches += make_patches(mask, patch_size, step)
 
     # drop patches with vessel area less than the threshold
     if threshold:
