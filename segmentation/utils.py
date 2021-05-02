@@ -142,8 +142,11 @@ def aggregate_block_patches(block_patches, save_dir=None):
     """
     block_coords = list(block_patches.keys())
     n_rows, n_cols = block_coords[-1]
-    patches = []
+    block_list = [[block_patches[i, j] for j in range(n_cols)] \
+                                        for i in range(n_rows)]
+    image = np.hstack(np.hstack(block_list))
 
+    return image
 
 
 # def save_patches
