@@ -1,0 +1,5 @@
+tensorflow==2.4.1
+pillow==8.2.0
+scikit-image==0.18.1
+
+# add packages for feature_extraction
