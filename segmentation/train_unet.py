@@ -3,7 +3,7 @@ import tensorflow as tf
 from glob import glob
 from PIL import Image
 from unet import get_unet
-from utils import make_patches, get_dataset
+from utils import make_patches, get_tf_dataset
 
 PATCH_SIZE = 256
 STEP = 64
