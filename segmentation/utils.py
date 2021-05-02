@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import tensorflow as tf
 from numbers import Number
 from PIL import Image
 from math import ceil, floor
@@ -57,6 +58,42 @@ def pad_image(image, new_size, pad_val=0):
                          for c in range(n_channels)], axis=2)
 
 
+def make_patches(image, patch_size, step, save_dir=None):
+    """
+    Call rolling window view of an image and save them in a dictionary.
+
+    Parameters
+    ----------
+    image: ndarray, {(height, width, n_channels), (height, width)}
+        Image to make patches with
+    patch_size: {int, tuple}, (patch_height, patch_width)
+        Image will be padded according to the patch_size and then split into
+        patches
+    step: int
+        Number of elements to skip when moving the window forward
+    save_dir: str, optional
+        Directory to save the patches
+
+    Returns
+    -------
+    patches_list: list
+    """
+    if isinstance(patch_size, Number):
+        patch_size = (patch_size, patch_size)
+
+    # make patches
+    temp_shape = image.shape[0:2] + (-1,) # for 2-d arrays
+    image = image.reshape(temp_shape)
+    n_channels = image.shape[2]
+    patch_size = patch_size + (n_channels,)
+    window_view = view_as_windows(image, patch_size, step)
+    n_rows, n_cols = window_view.shape[0:2]
+    patches = [window_view[i, j, 0] for i in range(n_rows) \
+                                    for j in range(n_cols)]
+
+    return patches
+
+
 def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     """
     Call block view of an image and save them in a dictionary.
@@ -107,42 +144,6 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     return block_patches
 
 
-def make_patches(image, patch_size, step, save_dir=None):
-    """
-    Call rolling window view of an image and save them in a dictionary.
-
-    Parameters
-    ----------
-    image: ndarray, {(height, width, n_channels), (height, width)}
-        Image to make patches with
-    patch_size: {int, tuple}, (patch_height, patch_width)
-        Image will be padded according to the patch_size and then split into
-        patches
-    step: int
-        Number of elements to skip when moving the window forward
-    save_dir: str, optional
-        Directory to save the patches
-
-    Returns
-    -------
-    patches_list: list
-    """
-    if isinstance(patch_size, Number):
-        patch_size = (patch_size, patch_size)
-
-    # make patches
-    temp_shape = image.shape[0:2] + (-1,) # for 2-d arrays
-    image = image.reshape(temp_shape)
-    n_channels = image.shape[2]
-    patch_size = patch_size + (n_channels,)
-    window_view = view_as_windows(image, patch_size, step)
-    n_rows, n_cols = window_view.shape[0:2]
-    patches_list = [window_view[i, j, 0] for i in range(n_rows) \
-                                         for j in range(n_cols)]
-
-    return patches_list
-
-
 def aggregate_block_patches(block_patches, save_dir=None):
     """
     Aggregate block patches to construct an image.
@@ -158,15 +159,28 @@ def aggregate_block_patches(block_patches, save_dir=None):
     """
     block_coords = list(block_patches.keys())
     n_rows, n_cols = block_coords[-1]
-    patches_list = [[block_patches[i, j] for j in range(n_cols)] \
-                                         for i in range(n_rows)]
-    image = np.hstack(np.hstack(patches_list))
+    patches = [[block_patches[i, j] for j in range(n_cols)] \
+                                        for i in range(n_rows)]
+    image = np.hstack(np.hstack(patches))
     if image.shape[2] == 1:
         image = image.reshape(image.shape[0:2]) # for 2-d arrays
 
     return image
 
+def vessel_threshold(image, alpha=0.01):
+    return np.sum(image)/image.size > alpha
 
+def get_dataset(image_patches, label_patches, alpha=0.01):
+    vessel_idx = list(map(vessel_threshold,
+                          label_patches, [alpha for i in len(label_patches)]))
+    image_patches = np.array(image_patches)[vessel_idx]
+    label_patches = np.array(label_patches)[vessel_idx]
+    train_images = tf.constant(image_patches)
+    train_labels = tf.constant(label_patches)
+    train_dataset = tf.data.Dataset.from_tensor_slices((train_images,
+                                                        train_labels))
+
+    return train_dataset
 # def save_patches
 
 # if save_dir is not None:
