@@ -1,6 +1,5 @@
 import tensorflow as tf
 from unet.unet import get_unet
-from utils.get_dataset import get_datset
 
 train_dataset
 
