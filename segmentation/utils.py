@@ -218,6 +218,12 @@ def get_tf_dataset(data_dir, patch_size, step, buffer_size, batch_size,
 
     return tf_dataset
 
+def adjust_prediction(prediction):
+    prediction = np.array(prediction)
+    prediction[prediction > 0.5] = 1
+    prediction[prediction <= 0.5] = 0
+
+    return prediction
 
 # def save_patches
 

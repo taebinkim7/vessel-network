@@ -12,7 +12,7 @@ BUFFER_SIZE = 10**5
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-4
 LOG_NUM = 3
-EPOCHS = 50
+EPOCHS = 20
 
 # set directories
 train_data_dir = '../data/train_data'
