@@ -2,7 +2,9 @@ import tensorflow as tf
 from tensorflow.keras import layers, Input
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dropout, UpSampling2D, concatenate
 
-def get_unet(input_size=(256, 256, 3), rate=0.5, pretrained_weights=None):
+def get_unet(patch_size=64, rate=0.5):
+    input_size = (patch_size, patch_size, 3)
+
     inputs = Input(input_size)
     c1 = Conv2D(64, 3, activation='relu', padding='same', kernel_initializer='he_normal')(inputs) # (256, 256, c)
     d1 = Dropout(rate)(c1)
