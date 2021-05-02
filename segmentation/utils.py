@@ -195,7 +195,7 @@ def get_tf_dataset(data_dir, patch_size, step, buffer_size, batch_size,
     if threshold:
         vessel_idx = list(map(vessel_threshold,
                               mask_patches,
-                              [alpha for i in len(mask_patches)]))
+                              [alpha for i in range(len(mask_patches))]))
         image_patches = np.array(image_patches)[vessel_idx]
         mask_patches = np.array(mask_patches)[vessel_idx]
 
