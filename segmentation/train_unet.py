@@ -6,7 +6,7 @@ from unet import get_unet
 from utils import make_patches, get_tf_dataset
 
 PATCH_SIZE = 64
-STEP = 8
+STEP = 16
 ALPHA = 0.001
 BUFFER_SIZE = 10**5
 BATCH_SIZE = 64
@@ -21,7 +21,7 @@ validation_data_dir = '../data/validation_data'
 train_dataset = get_tf_dataset(train_data_dir, PATCH_SIZE, STEP, BUFFER_SIZE,
 							   BATCH_SIZE, ALPHA)
 validation_dataset = get_tf_dataset(validation_data_dir, PATCH_SIZE, PATCH_SIZE,
-									BUFFER_SIZE, BATCH_SIZE, threshold=False)
+									BUFFER_SIZE, BATCH_SIZE, ALPHA)
 
 # get unet model
 model = get_unet(PATCH_SIZE)

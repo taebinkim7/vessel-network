@@ -190,7 +190,7 @@ def vessel_threshold(image, alpha=0.01):
     return np.sum(image)/image.size > alpha
 
 def get_tf_dataset(data_dir, patch_size, step, buffer_size, batch_size,
-                   alpha=0.01, threshold=True):
+                   alpha, threshold=True):
     image_files = glob(os.path.join(data_dir, 'images/*'))
     mask_files = glob(os.path.join(data_dir, 'masks/*'))
 
