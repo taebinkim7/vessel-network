@@ -7,10 +7,10 @@ from utils import make_patches, get_tf_dataset
 
 PATCH_SIZE = 64
 STEP = 32
-ALPHA = 0.01
+ALPHA = 0.001
 BUFFER_SIZE = 10**5
 BATCH_SIZE = 64
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 1e-4
 LOG_NUM = 4
 EPOCHS = 20
 
