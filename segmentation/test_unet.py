@@ -24,7 +24,7 @@ image_files = glob(os.path.join(test_data_dir, 'images/*'))
 
 for image_file, mask_file in zip(image_files, mask_files):
     file_name = os.path.basename(image_file)
-	image = np.array(Image.open(image_file))/255 # rescale the image
+    image = np.array(Image.open(image_file))/255 # rescale the image
     old_size = image.shape[0:2]
     image_block_patches = make_block_patches(image, PATCH_SIZE)
     block_coords = list(image_block_patches.keys())
