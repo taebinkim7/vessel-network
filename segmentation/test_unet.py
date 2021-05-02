@@ -18,7 +18,7 @@ model.load_weights(latest_ckpt)
 
 # set paths for data
 test_data_dir = '../data/test_data'
-prediction_dir = glob(os.path.join(test_data_dir, 'predictions'))
+prediction_dir = os.path.join(test_data_dir, 'predictions')
 os.makedirs(prediction_dir, exist_ok=True)
 image_files = glob(os.path.join(test_data_dir, 'images/*'))
 
