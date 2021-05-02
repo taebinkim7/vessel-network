@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import tensorflow as tf
+from glob import glob
 from numbers import Number
 from PIL import Image
 from math import ceil, floor
@@ -164,23 +165,64 @@ def aggregate_block_patches(block_patches, save_dir=None):
     image = np.hstack(np.hstack(patches))
     if image.shape[2] == 1:
         image = image.reshape(image.shape[0:2]) # for 2-d arrays
+    elif np.max(image) <= 1:
+        image *= 255.0
+        image = image.astype(np.uint8)
 
     return image
 
 def vessel_threshold(image, alpha=0.01):
     return np.sum(image)/image.size > alpha
 
-def get_dataset(image_patches, label_patches, alpha=0.01):
-    vessel_idx = list(map(vessel_threshold,
-                          label_patches, [alpha for i in len(label_patches)]))
-    image_patches = np.array(image_patches)[vessel_idx]
-    label_patches = np.array(label_patches)[vessel_idx]
-    train_images = tf.constant(image_patches)
-    train_labels = tf.constant(label_patches)
-    train_dataset = tf.data.Dataset.from_tensor_slices((train_images,
-                                                        train_labels))
+def get_tf_dataset(data_dir, patch_size, step, batch_size, buffer_size,
+                   alpha=0.01, cut_threshold=True):
+    image_files = glob(os.path.join(data_dir, 'images/*'))
+    label_files = glob(os.path.join(data_dir, 'labels/*'))
 
-    return train_dataset
+    # get patches
+    image_patches, label_patches = [], []
+    for image_file, label_file in zip(image_files, label_files):
+    	image = np.array(Image.open(image_file)) / 255 # rescale the image
+    	label = np.array(Image.open(label_file))
+    	image_patches += make_patches(image, patch_size, STEP)
+    	label_patches += make_patches(label, patch_size, STEP)
+
+    # drop patches with vessel area less than the threshold
+    if cut_threshold:
+        vessel_idx = list(map(vessel_threshold,
+                              label_patches,
+                              [alpha for i in len(label_patches)]))
+        image_patches = np.array(image_patches)[vessel_idx]
+        label_patches = np.array(label_patches)[vessel_idx]
+
+    # get dataset
+    tf_images = tf.constant(image_patches)
+    tf_labels = tf.constant(label_patches)
+    tf_dataset = tf.data.Dataset.from_tensor_slices((tf_images, tf_labels))
+    tf_dataset = tf_dataset.shuffle(buffer_size).batch(batch_size)
+    tf_dataset = tf_dataset.shuffle(buffer_size)
+
+    return tf_dataset
+
+# set directory and get file paths
+train_data_dir = '../data/train_data'
+image_files = glob(os.path.join(train_data_dir, 'images/*'))
+label_files = glob(os.path.join(train_data_dir, 'labels/*'))
+
+# get patches
+image_patches, label_patches = [], []
+for image_file, label_file in zip(image_files, label_files):
+	image = np.array(Image.open(image_file)) / 255 # rescale the image
+	label = np.array(Image.open(label_file))
+	image_patches += make_patches(image, PATCH_SIZE, STEP)
+	label_patches += make_patches(label, PATCH_SIZE, STEP)
+
+# get training dataset
+train_dataset = get_dataset(image_patches, label_patches, ALPHA)
+train_dataset = train_dataset.batch(BATCH_SIZE)
+train_dataset = train_dataset.shuffle(BUFFER_SIZE)
+
+
 # def save_patches
 
 # if save_dir is not None:
