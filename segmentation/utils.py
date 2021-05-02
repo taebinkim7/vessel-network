@@ -14,8 +14,8 @@ def pad_image(image, new_size, pad_val=0):
     image: ndarray, {(height, width, n_channels), (height, width)}
         Image to pad with
     new_size: {int, tuple}, (new_height, new_width)
-        Image will be padded to (new_height, new_width, n_channels) or
-        (new_heght, new_width)
+        Image will be padded to the shape of (new_height, new_width, n_channels)
+        or (new_heght, new_width)
     pad_val: {float, list-like}
         Values to pad with
 
@@ -56,6 +56,7 @@ def pad_image(image, new_size, pad_val=0):
                              constant_values=pad_val[c])
                          for c in range(n_channels)], axis=2)
 
+
 def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     """
     Call block view of an image and save them in a dictionary.
@@ -92,6 +93,7 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     # make dictionary
     # Note: From Python 3.6 onwards, the standard dict type maintains insertion
     # order by default
+
     block_patches = {}
 
     n_rows, n_cols = block_view.shape[0:2]
@@ -125,6 +127,10 @@ def make_patches(image, patch_size, step, save_dir=None):
     -------
     patches: ndarray
     """
+    if isinstance(patch_size, Number):
+        patch_size = (patch_size, patch_size)
+    window_view = view_as_windows(image, patch_size, step)
+
 
 
 def aggregate_block_patches(block_patches, save_dir=None):
@@ -134,7 +140,7 @@ def aggregate_block_patches(block_patches, save_dir=None):
     Parameters
     ----------
     block_patches: dictionary
-        Dictionary where its values are patches to construct an image with
+        Dictionary with block coordinates as keys and patches as values
 
     Returns
     -------
@@ -145,6 +151,8 @@ def aggregate_block_patches(block_patches, save_dir=None):
     block_list = [[block_patches[i, j] for j in range(n_cols)] \
                                         for i in range(n_rows)]
     image = np.hstack(np.hstack(block_list))
+    if image.shape[2] == 1:
+        image = image.reshape(image.shape[0:2]) # for 2-d arrays
 
     return image
 
