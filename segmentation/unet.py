@@ -50,7 +50,7 @@ def get_unet(input_size=(256, 256, 1), rate=0.5, pretrained_weights=None):
     m9 = concatenate([c1, u9], axis=3)
     c9 = Conv2D(64, 3, activation='relu', padding='same', kernel_initializer='he_normal')(m9)
     d9 = Dropout(rate)(c9)
-    c9 = Conv2D(64, 3, activation='relu', padding='same', kernel_initializer='he_normal')(c9)
+    c9 = Conv2D(64, 3, activation='relu', padding='same', kernel_initializer='he_normal')(d9)
     c9 = Conv2D(2, 3, activation='relu', padding='same', kernel_initializer='he_normal')(c9)
 
     outputs = Conv2D(1, 1, activation='sigmoid')(c9)
