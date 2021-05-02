@@ -140,6 +140,9 @@ def aggregate_block_patches(block_patches, save_dir=None):
     -------
     image: ndarray
     """
+    block_coords = list(block_patches.keys())
+    n_rows, n_cols = block_coords[-1]
+    patches = []
 
 
 
