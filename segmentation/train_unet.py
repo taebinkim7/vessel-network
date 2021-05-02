@@ -5,13 +5,13 @@ from PIL import Image
 from unet import get_unet
 from utils import make_patches, get_tf_dataset
 
-PATCH_SIZE = 256
-STEP = 64
+PATCH_SIZE = 64
+STEP = 32
 ALPHA = 0.01
 BUFFER_SIZE = 10**5
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-4
-LOG_NUM = 1
+LOG_NUM = 2
 EPOCHS = 50
 
 # set directories
