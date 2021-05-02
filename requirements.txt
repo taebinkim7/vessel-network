@@ -3,3 +3,4 @@ pillow==8.2.0
 scikit-image==0.18.1
 
 # add packages for feature_extraction
+# conda install -c nvidia cudnn

@@ -4,7 +4,7 @@ import tensorflow as tf
 from glob import glob
 from PIL import Image
 from unet import get_unet
-from utils import make_block_patches, aggregate_block_patches
+from utils import make_block_patches, aggregate_block_patches, adjust_prediction
 
 PATCH_SIZE = 64
 LOG_NUM = 3
