@@ -6,7 +6,7 @@ from unet import get_unet
 from utils import make_patches, get_tf_dataset
 
 PATCH_SIZE = 64
-STEP = 32
+STEP = 8
 ALPHA = 0.001
 BUFFER_SIZE = 10**5
 BATCH_SIZE = 64
