@@ -33,12 +33,12 @@ ckpt_dir = 'ckpt_{}'.format(LOG_NUM)
 os.makedirs(ckpt_dir, exist_ok=True)
 ckpt_file = os.path.join(ckpt_dir, 'cp.ckpt')
 
-cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=ckpt_file,
-                                                 save_weights_only=True,
-                                                 verbose=1)
+ckpt_callback = tf.keras.callbacks.ModelCheckpoint(filepath=ckpt_file,
+                                                   save_weights_only=True,
+                                                   verbose=1)
 
 # train model
 model.fit(train_dataset,
           epochs=EPOCHS,
           validation_data=validation_dataset,
-          callbacks=[cp_callback])
+          callbacks=[ckpt_callback])

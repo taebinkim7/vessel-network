@@ -61,7 +61,7 @@ def pad_image(image, new_size, pad_val=0):
 
 def make_patches(image, patch_size, step, pad_val=0, save_dir=None):
     """
-    Call rolling window view of an image and save them in a dictionary.
+    Call rolling window view of an image and save them in a list.
 
     Parameters
     ----------
@@ -149,7 +149,7 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     return block_patches
 
 
-def aggregate_block_patches(block_patches, save_dir=None):
+def aggregate_block_patches(block_patches, old_size=None, save_dir=None):
     """
     Aggregate block patches to construct an image.
 
@@ -157,6 +157,8 @@ def aggregate_block_patches(block_patches, save_dir=None):
     ----------
     block_patches: dictionary
         Dictionary with block coordinates as keys and patches as values
+    old_size: {int, tuple}, (old_height, old_width)
+        Image will be resized to the original shape
 
     Returns
     -------
@@ -167,6 +169,15 @@ def aggregate_block_patches(block_patches, save_dir=None):
     patches = [[block_patches[i, j] for j in range(n_cols)] \
                                         for i in range(n_rows)]
     image = np.hstack(np.hstack(patches))
+
+    if old_size is not None:
+        if isinstance(old_size, Number):
+            old_size = (old_size, old_size)
+        h, w = image.shape[0:2]
+        assert (old_size[0] < h) & (old_size[1] < w)
+        image = image[(h - old_size[0])//2:(h + old_size[0])//2,
+                      (w - old_size[1])//2:(w + old_size[1])//2, :]
+
     if image.shape[2] == 1:
         image = image.reshape(image.shape[0:2]) # for 2-d arrays
     elif np.max(image) <= 1:
