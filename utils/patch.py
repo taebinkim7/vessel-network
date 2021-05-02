@@ -11,12 +11,18 @@ def pad_image(image, new_size, pad_val=0):
 
     Parameters
     ----------
-    image (ndarray): (height, width, n_channels), (height, width)
-        Image to pad
-    new_size: int, tuple, (new_height, new_width)
+    image: ndarray, {(height, width, n_channels), (height, width)}
+        Image to pad with
+    new_size: {int, tuple}, (new_height, new_width)
         Image will be padded to (new_height, new_width, n_channels) or
         (new_heght, new_width)
-    pad_val: float, listlike value to pad with
+    pad_val: {float, list-like}
+        Values to pad with
+
+    Returns
+    -------
+    image: nadarray, {(new_size[0], new_size[1], n_channels), new_size}
+        Padded image
     """
     if isinstance(new_size, Number):
         new_size = (new_size, new_size)
@@ -56,14 +62,20 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
 
     Parameters
     ----------
-    image (ndarray): (height, width, n_channels), (height, width)
+    image: ndarray, {(height, width, n_channels), (height, width)}
         Image to make patches with
-    patch_size: int, tuple, (patch_height, patch_width)
+    patch_size: {int, tuple}, (patch_height, patch_width)
         Image will be padded according to the patch_size and then split into
         patches
-    pad_val: float, listlike value to pad with
-    save_dir: str
+    pad_val: {float, list-like}
+        Values to pad with
+    save_dir: str, optional
         Directory to save the patches
+
+    Returns
+    -------
+    block_patches: dictionary
+        Dictionary with block coordinates as keys and patches as values
     """
     if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
@@ -77,9 +89,11 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     patch_size = patch_size + (n_channels,)
     block_view = view_as_blocks(image, patch_size)
 
+    # make dictionary
+    # Note: From Python 3.6 onwards, the standard dict type maintains insertion
+    # order by default
     block_patches = {}
 
-    # make dictionary
     n_rows, n_cols = block_view.shape[0:2]
     for i in range(n_rows):
         for j in range(n_cols):
@@ -97,19 +111,35 @@ def make_patches(image, patch_size, step, save_dir=None):
 
     Parameters
     ----------
-    image (ndarray): (height, width, n_channels), (height, width)
+    image: ndarray, {(height, width, n_channels), (height, width)}
         Image to make patches with
-    patch_size: int, tuple, (patch_height, patch_width)
+    patch_size: {int, tuple}, (patch_height, patch_width)
         Image will be padded according to the patch_size and then split into
         patches
     step: int
         Number of elements to skip when moving the window forward
-    save_dir: str
+    save_dir: str, optional
         Directory to save the patches
+
+    Returns
+    -------
+    patches: ndarray
     """
 
 def aggregate_block_patches(block_patches, save_dir=None):
-    
+    """
+    Aggregate block patches to construct an image.
+
+    Parameters
+    ----------
+    block_patches: dictionary
+        Dictionary where its values are patches to construct an image with
+
+    Returns
+    -------
+    image: ndarray
+    """
+
 
 # def save_patches
 
