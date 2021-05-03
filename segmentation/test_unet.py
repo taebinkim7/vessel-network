@@ -7,7 +7,7 @@ from unet import get_unet
 from utils import make_block_patches, aggregate_block_patches, adjust_prediction
 
 PATCH_SIZE = 64
-LOG_NUM = 3
+LOG_NUM = 1
 
 # load unet model
 ckpt_dir = 'ckpt_{}'.format(LOG_NUM)
