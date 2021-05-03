@@ -178,10 +178,11 @@ def aggregate_block_patches(block_patches, old_size=None):
                       (w - old_size[1]) // 2:(w + old_size[1]) // 2,
                       :]
 
+    image = image
     if image.shape[2] == 1: # for 2-d arrays
         image = image.reshape(image.shape[0:2])
     if np.max(image) <= 1: # to save the image using PIL.Image
-        image *= 255.0
+        image *= 255
         image = image.astype(np.uint8)
 
     return image
