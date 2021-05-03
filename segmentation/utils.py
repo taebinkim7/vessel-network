@@ -80,7 +80,9 @@ def make_train_patches(image, patch_size, step, pad_val=0):
     # pad the image
     if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
-    new_size = ceil(np.array(image.shape[0:2]) / patch_size) * patch_size
+    new_h = ceil(image.shape[0] / patch_size[0]) * patch_size[0]
+    new_w = ceil(image.shape[1] / patch_size[1]) * patch_size[1]
+    new_size = (new_h, new_w)
     image = pad_image(image, new_size, pad_val)
 
     # make patches
@@ -118,7 +120,9 @@ def make_block_patches(image, patch_size, pad_val=0):
     # pad the image
     if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
-    new_size = ceil(np.array(image.shape[0:2]) / patch_size) * patch_size
+    new_h = ceil(image.shape[0] / patch_size[0]) * patch_size[0]
+    new_w = ceil(image.shape[1] / patch_size[1]) * patch_size[1]
+    new_size = (new_h, new_w)
     image = pad_image(image, new_size, pad_val)
 
     # make patches
