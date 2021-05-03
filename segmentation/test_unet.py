@@ -24,7 +24,7 @@ image_files = glob(os.path.join(test_data_dir, 'images/*'))
 
 for image_file in image_files:
     file_name = os.path.basename(image_file)
-    image = np.array(Image.open(image_file))/255 # rescale the image
+    image = np.array(Image.open(image_file)) / 255 # rescale the image
     old_size = image.shape[0:2]
     image_block_patches = make_block_patches(image, PATCH_SIZE)
     block_coords = list(image_block_patches.keys())
@@ -34,4 +34,4 @@ for image_file in image_files:
     predicted_patches = dict(zip(block_coords, predicted_patches))
     predicted_mask = aggregate_block_patches(predicted_patches, old_size)
     save_file = os.path.join(prediction_dir, file_name[:-4] + '_prediction.tif')
-    Image.fromarray(np.uint8(predicted_mask*255) , 'L').save(save_file)
+    Image.fromarray(predicted_mask , 'L').save(save_file)
