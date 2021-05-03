@@ -198,7 +198,7 @@ def get_train_dataset(data_dir, patch_size, step, batch_size, alpha,
     image_patches, mask_patches = [], []
     for image_file, mask_file in zip(image_files, mask_files):
     	image = np.array(Image.open(image_file))/255 # rescale the image
-    	mask = np.array(Image.open(mask_file))
+    	mask = np.array(Image.open(mask_file)).astype(int)
     	image_patches += make_train_patches(image, patch_size, step)
     	mask_patches += make_train_patches(mask, patch_size, step)
 
