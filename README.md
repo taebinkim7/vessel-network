@@ -2,7 +2,11 @@
 
 This repository is built to implement a blood vessel network analysis.
 
-`conda create -n med-ajive python=3.7.2`
+First, create a venv, e.g., `conda create -n med-ajive python=3.7.2`.
+Then activate the venv and install required packages using 
+```
+pip install -r requirements.txt
+```
 
 ## Blood Vessel Segmentation
 
