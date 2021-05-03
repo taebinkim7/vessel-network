@@ -164,7 +164,7 @@ def aggregate_block_patches(block_patches, old_size=None):
     image: ndarray
     """
     block_coords = list(block_patches.keys())
-    n_rows, n_cols = block_coords[-1]
+    n_rows, n_cols = np.array(block_coords[-1]) + 1
     patches = [[block_patches[i, j] for j in range(n_cols)] \
                                         for i in range(n_rows)]
     image = np.hstack(np.hstack(patches))
