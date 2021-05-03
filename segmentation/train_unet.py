@@ -3,13 +3,12 @@ import tensorflow as tf
 from glob import glob
 from PIL import Image
 from unet import get_unet
-from utils import make_patches, get_tf_dataset
+from utils import make_train_patches, get_train_dataset
 
 PATCH_SIZE = 64
 DROPOUT_RATE = 0.2
 STEP = 16
 ALPHA = 0.001
-BUFFER_SIZE = 10**5
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-4
 LOG_NUM = 5
@@ -19,10 +18,10 @@ EPOCHS = 20
 train_data_dir = '../data/train_data'
 validation_data_dir = '../data/validation_data'
 
-train_dataset = get_tf_dataset(train_data_dir, PATCH_SIZE, STEP, BUFFER_SIZE,
-							   BATCH_SIZE, ALPHA)
-validation_dataset = get_tf_dataset(validation_data_dir, PATCH_SIZE, PATCH_SIZE,
-									BUFFER_SIZE, BATCH_SIZE, ALPHA)
+train_dataset = get_train_dataset(train_data_dir, PATCH_SIZE, STEP, BATCH_SIZE,
+                                  ALPHA)
+validation_dataset = get_train_dataset(validation_data_dir, PATCH_SIZE,
+                                       PATCH_SIZE, BATCH_SIZE, ALPHA)
 
 # get unet model
 model = get_unet(PATCH_SIZE, DROPOUT_RATE)

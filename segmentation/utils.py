@@ -59,7 +59,7 @@ def pad_image(image, new_size, pad_val=0):
                          for c in range(n_channels)], axis=2)
 
 
-def make_patches(image, patch_size, step, pad_val=0, save_dir=None):
+def make_train_patches(image, patch_size, step, pad_val=0, save_dir=None):
     """
     Call rolling window view of an image and save them in a list.
 
@@ -189,8 +189,8 @@ def aggregate_block_patches(block_patches, old_size=None, save_dir=None):
 def vessel_threshold(image, alpha=0.01):
     return np.sum(image)/image.size > alpha
 
-def get_tf_dataset(data_dir, patch_size, step, buffer_size, batch_size,
-                   alpha, threshold=True):
+def get_train_dataset(data_dir, patch_size, step, batch_size, alpha,
+                      threshold=True):
     image_files = glob(os.path.join(data_dir, 'images/*'))
     mask_files = glob(os.path.join(data_dir, 'masks/*'))
 
@@ -199,8 +199,8 @@ def get_tf_dataset(data_dir, patch_size, step, buffer_size, batch_size,
     for image_file, mask_file in zip(image_files, mask_files):
     	image = np.array(Image.open(image_file))/255 # rescale the image
     	mask = np.array(Image.open(mask_file))
-    	image_patches += make_patches(image, patch_size, step)
-    	mask_patches += make_patches(mask, patch_size, step)
+    	image_patches += make_train_patches(image, patch_size, step)
+    	mask_patches += make_train_patches(mask, patch_size, step)
 
     # drop patches with vessel area less than the threshold
     if threshold:
@@ -211,12 +211,12 @@ def get_tf_dataset(data_dir, patch_size, step, buffer_size, batch_size,
         mask_patches = np.array(mask_patches)[vessel_idx]
 
     # get dataset
-    tf_images = tf.constant(image_patches)
-    tf_masks = tf.constant(mask_patches)
-    tf_dataset = tf.data.Dataset.from_tensor_slices((tf_images, tf_masks))
-    tf_dataset = tf_dataset.cache().shuffle(buffer_size).batch(batch_size)
+    image_patches = tf.constant(image_patches)
+    mask_patches = tf.constant(mask_patches)
+    train_dataset = tf.data.Dataset.from_tensor_slices((image_patches, mask_patches))
+    train_dataset = train_dataset.cache().batch(batch_size)
 
-    return tf_dataset
+    return train_dataset
 
 def adjust_prediction(prediction):
     prediction = np.array(prediction)
