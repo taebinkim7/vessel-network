@@ -1,0 +1,102 @@
+---
+title: "Feature Extraction"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## degreedata.xlsx    
+
+
+```{r degree}
+library(tidyverse)
+library(readxl)
+p2_degree = read_excel(path = "feature/p2-fro_degreedata.xlsx", col_names = TRUE)
+p3_degree = read_excel(path = "feature/p3-fro_degreedata.xlsx", col_names = TRUE)
+p4_degree = read_excel(path = "feature/p4-fro_degreedata.xlsx", col_names = TRUE)
+p5_degree = read_excel(path = "feature/p5-fro_degreedata.xlsx", col_names = TRUE)
+p6_degree = read_excel(path = "feature/p6-fro_degreedata.xlsx", col_names = TRUE)
+p7_degree = read_excel(path = "feature/p7-fro_degreedata.xlsx", col_names = TRUE)
+```
+
+
+### Count of branchpoints     
+
+```{r}
+# Count of branchpoints
+nrow(p2_degree)
+nrow(p3_degree)
+nrow(p4_degree)
+nrow(p5_degree)
+nrow(p6_degree)
+nrow(p7_degree)
+```
+
+### Spatial density of nodes (Branching number per node)
+
+```{r}
+# Branching number per node 
+# Spatial density of nodes
+deg_spatial_density = data.frame(miceage = c(), degree = c(), density = c())
+
+degree = p2_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(2,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p3_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(3,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p4_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(4,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p5_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(5,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p6_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(6,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p7_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(7,max(degree)), degree = 1:max(degree), density = deg_density))
+
+deg_spatial_density$miceage = as.factor(deg_spatial_density$miceage)
+deg_spatial_density$degree = as.factor(deg_spatial_density$degree)
+ggplot(deg_spatial_density, aes(x = degree, y = density, color = miceage, group = miceage)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Number k of vessels branching out for one node",
+       y = "% of branching points with node density >= k")
+
+
+
+```
