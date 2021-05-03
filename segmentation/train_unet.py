@@ -5,7 +5,7 @@ from PIL import Image
 from unet import get_unet
 from utils import make_train_patches, get_train_dataset
 
-PATCH_SIZE = 128
+PATCH_SIZE = 64
 DROPOUT_RATE = 0.2
 STEP = 16
 ALPHA = 0.001
