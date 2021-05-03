@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras import layers, Input
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dropout, UpSampling2D, concatenate
 
-def get_unet(patch_size, rate=0.5):
+def get_unet(patch_size, dropout_rate=0.2):
     input_size = (patch_size, patch_size, 3)
 
     inputs = Input(input_size)

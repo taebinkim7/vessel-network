@@ -6,12 +6,13 @@ from unet import get_unet
 from utils import make_patches, get_tf_dataset
 
 PATCH_SIZE = 64
+DROPOUT_RATE = 0.2
 STEP = 16
 ALPHA = 0.001
 BUFFER_SIZE = 10**5
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-4
-LOG_NUM = 4
+LOG_NUM = 5
 EPOCHS = 20
 
 # set directories
@@ -24,7 +25,7 @@ validation_dataset = get_tf_dataset(validation_data_dir, PATCH_SIZE, PATCH_SIZE,
 									BUFFER_SIZE, BATCH_SIZE, ALPHA)
 
 # get unet model
-model = get_unet(PATCH_SIZE)
+model = get_unet(PATCH_SIZE, DROPOUT_RATE)
 model.compile(optimizer=tf.keras.optimizers.Adam(lr=LEARNING_RATE),
               loss='binary_crossentropy', metrics=['accuracy'])
 
