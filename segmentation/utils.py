@@ -214,7 +214,7 @@ def get_train_dataset(data_dir, patch_size, step, batch_size, alpha,
     image_patches = tf.constant(image_patches)
     mask_patches = tf.constant(mask_patches)
     train_dataset = tf.data.Dataset.from_tensor_slices((image_patches, mask_patches))
-    train_dataset = train_dataset.cache().batch(batch_size)
+    train_dataset = train_dataset.batch(batch_size)
 
     return train_dataset
 
