@@ -34,4 +34,4 @@ for image_file in image_files:
     predicted_patches = dict(zip(block_coords, predicted_patches))
     predicted_mask = aggregate_block_patches(predicted_patches, old_size)
     save_file = os.path.join(prediction_dir, file_name[:-4] + '_prediction.tif')
-    Image.fromarray(predicted_mask*255, 'L').convert('1').save(save_file)
+    Image.fromarray(np.uint8(predicted_mask*255) , 'L').save(save_file)
