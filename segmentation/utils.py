@@ -35,16 +35,15 @@ def pad_image(image, new_size, pad_val=0):
         print('WARNING: image width larger than desired image size')
         return image
 
-    # width padding
-    width_diff = new_size[1] - image.shape[1]
-
-    # how much padding to add
-    left = floor(width_diff / 2)
-    right = ceil(width_diff / 2)
+    # how much to pad
     height_diff = new_size[0] - image.shape[0]
-
     top = floor(height_diff / 2)
     bottom = ceil(height_diff / 2)
+
+    width_diff = new_size[1] - image.shape[1]
+    left = floor(width_diff / 2)
+    right = ceil(width_diff / 2)
+
     pad_width = ((top, bottom), (left, right), (0, 0))
 
     # make work with 2-d arrays
@@ -176,7 +175,8 @@ def aggregate_block_patches(block_patches, old_size=None):
         h, w = image.shape[0:2]
         assert (old_size[0] <= h) & (old_size[1] <= w)
         image = image[(h - old_size[0]) // 2:(h + old_size[0]) // 2,
-                      (w - old_size[1]) // 2:(w + old_size[1]) // 2, :]
+                      (w - old_size[1]) // 2:(w + old_size[1]) // 2,
+                      :]
 
     if image.shape[2] == 1: # for 2-d arrays
         image = image.reshape(image.shape[0:2])
