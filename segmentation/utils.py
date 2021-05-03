@@ -35,16 +35,15 @@ def pad_image(image, new_size, pad_val=0):
         print('WARNING: image width larger than desired image size')
         return image
 
-    # width padding
-    width_diff = new_size[1] - image.shape[1]
-
-    # how much padding to add
-    left = floor(width_diff / 2)
-    right = ceil(width_diff / 2)
+    # how much to pad
     height_diff = new_size[0] - image.shape[0]
-
     top = floor(height_diff / 2)
     bottom = ceil(height_diff / 2)
+
+    width_diff = new_size[1] - image.shape[1]
+    left = floor(width_diff / 2)
+    right = ceil(width_diff / 2)
+
     pad_width = ((top, bottom), (left, right), (0, 0))
 
     # make work with 2-d arrays
@@ -59,7 +58,7 @@ def pad_image(image, new_size, pad_val=0):
                          for c in range(n_channels)], axis=2)
 
 
-def make_train_patches(image, patch_size, step, pad_val=0, save_dir=None):
+def make_train_patches(image, patch_size, step, pad_val=0):
     """
     Call rolling window view of an image and save them in a list.
 
@@ -72,8 +71,6 @@ def make_train_patches(image, patch_size, step, pad_val=0, save_dir=None):
     step: int
         Number of elements to skip when moving the window forward. We only use
         a factor of patch_size as step in this function
-    save_dir: str, optional
-        Directory to save the patches
 
     Returns
     -------
@@ -82,7 +79,9 @@ def make_train_patches(image, patch_size, step, pad_val=0, save_dir=None):
     # pad the image
     if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
-    new_size = (np.array(image.shape[0:2])//patch_size + 1)*patch_size
+    new_h = ceil(image.shape[0] / patch_size[0]) * patch_size[0]
+    new_w = ceil(image.shape[1] / patch_size[1]) * patch_size[1]
+    new_size = (new_h, new_w)
     image = pad_image(image, new_size, pad_val)
 
     # make patches
@@ -98,7 +97,7 @@ def make_train_patches(image, patch_size, step, pad_val=0, save_dir=None):
     return patches
 
 
-def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
+def make_block_patches(image, patch_size, pad_val=0):
     """
     Call block view of an image and save them in a dictionary.
 
@@ -111,8 +110,6 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
         patches
     pad_val: {float, list-like}
         Values to pad with
-    save_dir: str, optional
-        Directory to save the patches
 
     Returns
     -------
@@ -122,7 +119,9 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     # pad the image
     if isinstance(patch_size, Number):
         patch_size = (patch_size, patch_size)
-    new_size = (np.array(image.shape[0:2])//patch_size + 1)*patch_size
+    new_h = ceil(image.shape[0] / patch_size[0]) * patch_size[0]
+    new_w = ceil(image.shape[1] / patch_size[1]) * patch_size[1]
+    new_size = (new_h, new_w)
     image = pad_image(image, new_size, pad_val)
 
     # make patches
@@ -149,7 +148,7 @@ def make_block_patches(image, patch_size, pad_val=0, save_dir=None):
     return block_patches
 
 
-def aggregate_block_patches(block_patches, old_size=None, save_dir=None):
+def aggregate_block_patches(block_patches, old_size=None):
     """
     Aggregate block patches to construct an image.
 
@@ -165,7 +164,7 @@ def aggregate_block_patches(block_patches, old_size=None, save_dir=None):
     image: ndarray
     """
     block_coords = list(block_patches.keys())
-    n_rows, n_cols = block_coords[-1]
+    n_rows, n_cols = np.array(block_coords[-1]) + 1
     patches = [[block_patches[i, j] for j in range(n_cols)] \
                                         for i in range(n_rows)]
     image = np.hstack(np.hstack(patches))
@@ -175,19 +174,18 @@ def aggregate_block_patches(block_patches, old_size=None, save_dir=None):
             old_size = (old_size, old_size)
         h, w = image.shape[0:2]
         assert (old_size[0] <= h) & (old_size[1] <= w)
-        image = image[(h - old_size[0])//2:(h + old_size[0])//2,
-                      (w - old_size[1])//2:(w + old_size[1])//2, :]
+        image = image[(h - old_size[0]) // 2:(h + old_size[0]) // 2,
+                      (w - old_size[1]) // 2:(w + old_size[1]) // 2,
+                      :]
 
-    if image.shape[2] == 1:
-        image = image.reshape(image.shape[0:2]) # for 2-d arrays
-    elif np.max(image) <= 1:
-        image *= 255.0
-        image = image.astype(np.uint8)
+    image = image
+    if image.shape[2] == 1: # for 2-d arrays
+        image = image.reshape(image.shape[0:2])
 
     return image
 
 def vessel_threshold(image, alpha=0.01):
-    return np.sum(image)/image.size > alpha
+    return np.sum(image) / image.size > alpha
 
 def get_train_dataset(data_dir, patch_size, step, batch_size, alpha,
                       threshold=True):
@@ -197,7 +195,7 @@ def get_train_dataset(data_dir, patch_size, step, batch_size, alpha,
     # get patches
     image_patches, mask_patches = [], []
     for image_file, mask_file in zip(image_files, mask_files):
-    	image = np.array(Image.open(image_file))/255 # rescale the image
+    	image = np.array(Image.open(image_file)) / 255 # rescale the image
     	mask = np.array(Image.open(mask_file)).astype(int)
     	image_patches += make_train_patches(image, patch_size, step)
     	mask_patches += make_train_patches(mask, patch_size, step)
@@ -213,7 +211,8 @@ def get_train_dataset(data_dir, patch_size, step, batch_size, alpha,
     # get dataset
     image_patches = tf.constant(image_patches)
     mask_patches = tf.constant(mask_patches)
-    train_dataset = tf.data.Dataset.from_tensor_slices((image_patches, mask_patches))
+    train_dataset = tf.data.Dataset.from_tensor_slices((image_patches,
+                                                        mask_patches))
     train_dataset = train_dataset.batch(batch_size)
 
     return train_dataset
@@ -225,16 +224,11 @@ def adjust_prediction(prediction):
 
     return prediction
 
-# def save_patches
+def save_patches(patches, save_dir):
+    """
 
-# if save_dir is not None:
-#     os.makedirs('save_dir', exist_ok=True)
-#     image_name = os.path.basename(image_file)[:-4] # omit '.png'
-#     patch_file = os.path.join(save_dir, image_name + \
-#                               '_patch_r{}c{}.png'.format(i, j))
-# else:
-#     patch_file = image_file[:-4] + '_patch_r{}c{}.png'.format(i, j)
-# Image.fromarray(patch).save(patch_file)
-#
-# def make_rand_patches(image, patch_size, n_patch):
-#
+    """
+    os.makedirs('save_dir', exist_ok=True)
+    for i, patch in enumerate(patches):
+        patch_file = os.path.join(save_dir, 'patch_{}.png'.format(i))
+        Image.fromarray(patch).save(patch_file)

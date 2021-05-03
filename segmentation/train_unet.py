@@ -7,11 +7,11 @@ from utils import make_train_patches, get_train_dataset
 
 PATCH_SIZE = 128
 DROPOUT_RATE = 0.2
-STEP = 16
+STEP = 32
 ALPHA = 0.001
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 LEARNING_RATE = 1e-4
-LOG_NUM = 2
+LOG_NUM = 1
 EPOCHS = 20
 
 # set directories
