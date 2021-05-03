@@ -21,7 +21,9 @@ from _utility import *
 from skimage.morphology import thin
 import pdb
 
-imgs_dir=os.getcwd() + "/img/"
+# imgs_dir=os.getcwd() + "/img/"
+imgs_dir=os.path.dirname(os.getcwd()) + "/data/test_data/predictions/"
+print(imgs_dir)
 save_dir=os.getcwd() + "/feature/"
 for path, subdirs, files in os.walk(imgs_dir): #list all files, directories in the path
     for i in range(len(files)):
