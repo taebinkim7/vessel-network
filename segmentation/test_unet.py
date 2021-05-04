@@ -30,7 +30,7 @@ for image_file in image_files:
     block_coords = list(image_block_patches.keys())
     test_patches = np.array(list(image_block_patches.values()))
     predicted_patches = model(test_patches, training=False)
-    predicted_patches = adjust_prediction(predicted_patches)
+    predicted_patches = adjust_prediction(predicted_patches) # adjust to binary images
     predicted_patches = dict(zip(block_coords, predicted_patches))
     predicted_mask = aggregate_block_patches(predicted_patches, old_size)
     save_file = os.path.join(prediction_dir, file_name[:-4] + '_prediction.tif')
