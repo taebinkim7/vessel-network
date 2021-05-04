@@ -184,8 +184,8 @@ def aggregate_block_patches(block_patches, old_size=None):
 
     return image
 
-def vessel_threshold(image, alpha=0.01):
-    return np.sum(image) / image.size > alpha
+def vessel_threshold(image, alpha=0.001):
+    return np.mean(image) > alpha
 
 def get_train_dataset(data_dir, patch_size, step, batch_size, alpha,
                       threshold=True):
