@@ -11,14 +11,13 @@ pip install -r requirements.txt
 ```
 
 ## Blood Vessel Segmentation
-First, save your training, validation images and masks in `data/train_data` and `data/validation_data`, respectively.
+First, save your training and validation data in `data/train_data` and `data/validation_data`, respectively.
 To train the UNet model run
 ```
 cd segmentation
 python train_unet.py
 ```
-Save test images in `data/test_data`.
-To generate predicted masks run
+Save test data in `data/test_data`, then to generate predicted masks run
 ```
 python test_unet.py
 ```
