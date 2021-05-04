@@ -1,8 +1,8 @@
 ---
 title: "Feature Extraction"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -49,7 +49,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep(2,max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("p2",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p3_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -57,7 +57,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep(3,max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("p3",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p4_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -65,7 +65,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep(4,max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("p4",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p5_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -73,7 +73,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep(5,max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("p5",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p6_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -81,7 +81,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep(6,max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("p6",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p7_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -89,7 +89,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep(7,max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("p7",max(degree)), degree = 1:max(degree), density = deg_density))
 
 deg_spatial_density$miceage = as.factor(deg_spatial_density$miceage)
 deg_spatial_density$degree = as.factor(deg_spatial_density$degree)
@@ -97,7 +97,8 @@ ggplot(deg_spatial_density, aes(x = degree, y = density, color = miceage, group 
   geom_line() +
   geom_point() +
   labs(x = "Number k of vessels branching out for one node",
-       y = "% of branching points with node density >= k")
+       y = "% of branching points with node density >= k") +
+  scale_colour_discrete("Mice age")
 ```
 
 Reference: https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6076630
@@ -138,12 +139,12 @@ mean(p5_all$length)
 mean(p6_all$length)
 mean(p7_all$length)
 
-var(p2_all$length)
-var(p3_all$length)
-var(p4_all$length)
-var(p5_all$length)
-var(p6_all$length)
-var(p7_all$length)
+sum(p2_all$length)
+sum(p3_all$length)
+sum(p4_all$length)
+sum(p5_all$length)
+sum(p6_all$length)
+sum(p7_all$length)
 
 mean(p2_all$tortuosity)
 mean(p3_all$tortuosity)
@@ -160,9 +161,12 @@ mean(p6_all$width)
 mean(p7_all$width)
 ```
 
-Couldn't find any interesting facts (differences) for length and tortuosity.    
+Sum of vessel length increases as it gets older   
+Couldn't find any other interesting facts (differences) for length and tortuosity.    
 Maybe Vessel width (diameter) gets smaller as it gets older? (perform t-test?)    
 
+
+## Summary 
 
 ```{r}
 vessel_summary = data.frame(p2 = c(),p3 = c(),p4 = c(),p5 = c(),p6 = c(),p7 = c())
@@ -184,4 +188,27 @@ rownames(m) = c("Number of Branchpoints", "Number of Vessel Edges","Mean of Vess
 options(digits=4)
 knitr::kable(as.data.frame(m), align="c")
 
+```   
+
+
+## Area
+
+```{r}
+## Install EBImage package
+### http://bioconductor.org/packages/release/bioc/html/EBImage.html
+library(EBImage)
+my_image2 <- readImage("../data/test_data/predictions/p2-from 5-5-2 M_prediction.tif")
+my_image3 <- readImage("../data/test_data/predictions/p3-from 5-5-2 M_prediction.tif")
+my_image4 <- readImage("../data/test_data/predictions/p4-from 5-5-2 M_prediction.tif")
+my_image5 <- readImage("../data/test_data/predictions/p5-from 5-5-1 M_prediction.tif")
+my_image6 <- readImage("../data/test_data/predictions/p6-from 5-5-2 M_prediction.tif")
+my_image7 <- readImage("../data/test_data/predictions/p7-from 5-5-2 M_prediction.tif")
+
+options(digits=4)
+knitr::kable(data.frame(p2 = mean(my_image2), p3 = mean(my_image3), p4 = mean(my_image4),
+                        p5 = mean(my_image5), p6 = mean(my_image6), p7 = mean(my_image7)), align = "c")
 ```
+
+VAD: ratio of the total image area occupied by blood vessel area
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4901200/pdf/JBO-021-066008.pdf (page 4)
+
