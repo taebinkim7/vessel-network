@@ -1,0 +1,187 @@
+---
+title: "Feature Extraction"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## degreedata.xlsx    
+
+
+```{r degree}
+library(tidyverse)
+library(readxl)
+p2_degree = read_excel(path = "feature/p2-fro_degreedata.xlsx", col_names = TRUE)
+p3_degree = read_excel(path = "feature/p3-fro_degreedata.xlsx", col_names = TRUE)
+p4_degree = read_excel(path = "feature/p4-fro_degreedata.xlsx", col_names = TRUE)
+p5_degree = read_excel(path = "feature/p5-fro_degreedata.xlsx", col_names = TRUE)
+p6_degree = read_excel(path = "feature/p6-fro_degreedata.xlsx", col_names = TRUE)
+p7_degree = read_excel(path = "feature/p7-fro_degreedata.xlsx", col_names = TRUE)
+```
+
+
+### Count of branchpoints     
+
+```{r}
+# Count of branchpoints
+nrow(p2_degree)
+nrow(p3_degree)
+nrow(p4_degree)
+nrow(p5_degree)
+nrow(p6_degree)
+nrow(p7_degree)
+```
+
+### Spatial density of nodes (Branching number per node)
+
+```{r}
+# Branching number per node 
+# Spatial density of nodes
+deg_spatial_density = data.frame(miceage = c(), degree = c(), density = c())
+
+degree = p2_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(2,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p3_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(3,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p4_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(4,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p5_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(5,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p6_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(6,max(degree)), degree = 1:max(degree), density = deg_density))
+
+degree = p7_degree$degree
+deg_density = table(degree)[max(degree):1] %>%
+  prop.table() %>%
+  cumsum() %>%
+  rev()
+deg_spatial_density = rbind(deg_spatial_density, 
+                            data.frame(miceage = rep(7,max(degree)), degree = 1:max(degree), density = deg_density))
+
+deg_spatial_density$miceage = as.factor(deg_spatial_density$miceage)
+deg_spatial_density$degree = as.factor(deg_spatial_density$degree)
+ggplot(deg_spatial_density, aes(x = degree, y = density, color = miceage, group = miceage)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Number k of vessels branching out for one node",
+       y = "% of branching points with node density >= k")
+```
+
+Reference: https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6076630
+
+
+## alldata.xlsx    
+
+
+```{r}
+p2_all = read_excel(path = "feature/p2-fro_alldata.xlsx", col_names = TRUE)
+p3_all = read_excel(path = "feature/p3-fro_alldata.xlsx", col_names = TRUE)
+p4_all = read_excel(path = "feature/p4-fro_alldata.xlsx", col_names = TRUE)
+p5_all = read_excel(path = "feature/p5-fro_alldata.xlsx", col_names = TRUE)
+p6_all = read_excel(path = "feature/p6-fro_alldata.xlsx", col_names = TRUE)
+p7_all = read_excel(path = "feature/p7-fro_alldata.xlsx", col_names = TRUE)
+```
+
+### Vessel segment - the number of vessel edges
+
+```{r}
+nrow(p2_all)
+nrow(p3_all)
+nrow(p4_all)
+nrow(p5_all)
+nrow(p6_all)
+nrow(p7_all)
+```
+
+It certainly increases as it gets older.        
+
+### Vessel length & Tortuosity & Width
+
+```{r}
+mean(p2_all$length)
+mean(p3_all$length)
+mean(p4_all$length)
+mean(p5_all$length)
+mean(p6_all$length)
+mean(p7_all$length)
+
+var(p2_all$length)
+var(p3_all$length)
+var(p4_all$length)
+var(p5_all$length)
+var(p6_all$length)
+var(p7_all$length)
+
+mean(p2_all$tortuosity)
+mean(p3_all$tortuosity)
+mean(p4_all$tortuosity)
+mean(p5_all$tortuosity)
+mean(p6_all$tortuosity)
+mean(p7_all$tortuosity)
+
+mean(p2_all$width)
+mean(p3_all$width)
+mean(p4_all$width)
+mean(p5_all$width)
+mean(p6_all$width)
+mean(p7_all$width)
+```
+
+Couldn't find any interesting facts (differences) for length and tortuosity.    
+Maybe Vessel width (diameter) gets smaller as it gets older? (perform t-test?)    
+
+
+```{r}
+vessel_summary = data.frame(p2 = c(),p3 = c(),p4 = c(),p5 = c(),p6 = c(),p7 = c())
+f1 = c(nrow(p2_degree),nrow(p3_degree),nrow(p4_degree),nrow(p5_degree),nrow(p6_degree),nrow(p7_degree))
+f2 = c(nrow(p2_all),nrow(p3_all),nrow(p4_all),nrow(p5_all),nrow(p6_all),nrow(p7_all))
+f3 = c(mean(p2_all$length),mean(p3_all$length),mean(p4_all$length),
+       mean(p5_all$length),mean(p6_all$length),mean(p7_all$length))
+f4 = c(mean(p2_all$tortuosity),mean(p3_all$tortuosity),mean(p4_all$tortuosity),
+       mean(p5_all$tortuosity),mean(p6_all$tortuosity),mean(p7_all$tortuosity))
+f5 = c(mean(p2_all$width),mean(p3_all$width),mean(p4_all$width),
+       mean(p5_all$width),mean(p6_all$width),mean(p7_all$width))
+  
+  
+m = rbind(f1,f2,f3,f4,f5)
+colnames(m) = c("p2","p3","p4","p5","p6","p7")
+rownames(m) = c("Number of Branchpoints", "Number of Vessel Edges","Mean of Vessel Length",
+                "Mean of Vessel Tortuosity","Mean of Vessel Width")
+
+options(digits=4)
+knitr::kable(as.data.frame(m), align="c")
+
+```
