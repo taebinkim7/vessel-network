@@ -85,7 +85,7 @@ def draw_graph2(image, graph, center=True):
     tmp1 = draw_edges(image, graph)
     tmp= draw_curve(tmp1, graph)
     #tmp=image
-    node_size=3
+    node_size=1
     return draw_nodes(tmp, graph, node_size,center)
 
 def draw_curve(image, graph):

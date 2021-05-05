@@ -126,9 +126,9 @@ for path, subdirs, files in os.walk(imgs_dir): #list all files, directories in t
     
         ########
         #Draw network
-        NODESIZESCALING = 3000
+        NODESIZESCALING = 30
         EDGETRANSPARENCYDIVIDER = 5
-        node_size=1
+        node_size=0.1
         
         pic=draw_graph2(np.asarray(image.convert("RGB")), graph,center=False)
         #plt.imshow(pic)
