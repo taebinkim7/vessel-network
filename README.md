@@ -30,7 +30,7 @@ cd ../feature_extraction
 feature_extraction.py
 ```
 The reconstructed network is saved in `feature_extraction/feature` by `imagename_network.png`.           
-The above code also extracts some features and the features are saved in `feature_extraction/feature` by `imagename_alldata.xlsx` and `imagename_degreedata.xlsx`.
+The above code also extracts the features of the network (e.g., vessel length, branching point, vessel segment, tortuosity, etc.) and they are saved in `feature_extraction/feature` by `imagename_alldata.xlsx` and `imagename_degreedata.xlsx`.
 
 ## Vessel Network Analysis
 
