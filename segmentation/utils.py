@@ -13,9 +13,9 @@ def pad_image(image, new_size, pad_val=0):
 
     Parameters
     ----------
-    image: ndarray, {(height, width, n_channels), (height, width)}
+    image: ndarray
         Image to pad with
-    new_size: {int, tuple}, (new_height, new_width)
+    new_size: {int, tuple}
         Image will be padded to the shape of (new_height, new_width, n_channels)
         or (new_heght, new_width)
     pad_val: {float, list-like}
@@ -23,7 +23,7 @@ def pad_image(image, new_size, pad_val=0):
 
     Returns
     -------
-    image: nadarray, {(new_size[0], new_size[1], n_channels), new_size}
+    image: nadarray
         Padded image
     """
     if isinstance(new_size, Number):
@@ -64,9 +64,9 @@ def make_train_patches(image, patch_size, step, pad_val=0):
 
     Parameters
     ----------
-    image: ndarray, {(height, width, n_channels), (height, width)}
+    image: ndarray
         Image to make patches with
-    patch_size: {int, tuple}, (patch_height, patch_width)
+    patch_size: {int, tuple}
         Image will be padded according to the patch_size
     step: int
         Number of elements to skip when moving the window forward. We only use
@@ -103,9 +103,9 @@ def make_block_patches(image, patch_size, pad_val=0):
 
     Parameters
     ----------
-    image: ndarray, {(height, width, n_channels), (height, width)}
+    image: ndarray
         Image to make patches with
-    patch_size: {int, tuple}, (patch_height, patch_width)
+    patch_size: {int, tuple}
         Image will be padded according to the patch_size and then split into
         patches
     pad_val: {float, list-like}
@@ -156,7 +156,7 @@ def aggregate_block_patches(block_patches, old_size=None):
     ----------
     block_patches: dictionary
         Dictionary with block coordinates as keys and patches as values
-    old_size: {int, tuple}, (old_height, old_width)
+    old_size: {int, tuple}
         Image will be resized to the original shape
 
     Returns
@@ -185,10 +185,31 @@ def aggregate_block_patches(block_patches, old_size=None):
     return image
 
 def vessel_threshold(image, alpha=0.001):
+    """
+    Evaluate if an image contains more than the threshold percentage of vessels
+    and return boolean
+    """
     return np.mean(image) > alpha
 
 def get_train_dataset(data_dir, patch_size, step, batch_size, alpha,
                       threshold=True):
+    """
+    Generate a train dataset for TensorFlow models
+
+    Parameters
+    ----------
+
+    data_dir: str
+    patch_size: {int, tuple}
+    step: int
+    batch_size: int
+    alpha: float
+    threshold: boolean, optional
+
+    Returns
+    -------
+    train_dataset: tensor-like
+    """
     image_files = glob(os.path.join(data_dir, 'images/*'))
     mask_files = glob(os.path.join(data_dir, 'masks/*'))
 
@@ -218,17 +239,45 @@ def get_train_dataset(data_dir, patch_size, step, batch_size, alpha,
     return train_dataset
 
 def adjust_prediction(prediction):
+    """
+    Adjust outputs to have binary values
+    """
     prediction = np.array(prediction)
     prediction[prediction > 0.5] = 1
     prediction[prediction <= 0.5] = 0
 
     return prediction
 
-def save_patches(patches, save_dir):
+def save_patches(patches, patch_type, data_dir):
     """
+    Save patches in a desired directory
 
+    Parameters
+    ----------
+    patches: {ndarray, list-like}
+    data_dir: str
+    patch_type: {'image', 'mask', 'prediction'}
     """
-    os.makedirs('save_dir', exist_ok=True)
+    os.makedirs(os.path.join(data_dir, 'patches'), exist_ok=True)
     for i, patch in enumerate(patches):
-        patch_file = os.path.join(save_dir, 'patch_{}.png'.format(i))
+        patch = patch.astype(int)
+        if np.max(patch) <= 1:
+            patch = np.uint8(patch * 255)
+        patch_file = os.path.join(data_dir, 'patches',
+                                  '{}_patch_{}.png'.format(patch_type, i))
         Image.fromarray(patch).save(patch_file)
+
+def comparison_plot(n_patches, data_dir):
+    """
+    Generate a comparison plot of image, mask, and prediction patches
+    """
+    fig = plt.figure(figsize=(10 * n_patches, 10 * 3))
+    for i in range(n_patches):
+        for j, patch_type in enumerate(['image', 'mask', 'prediction']):
+            patch_file = os.path.join(data_dir, 'patches',
+                                      '{}_patch_{}.png'.format(patch_type, i))
+            patch = np.array(Image.open(patch_file))
+            plt.subplot(3, n_patches, i + j * n_patches + 1)
+            plt.imshow(patch)
+            plt.axis('off')
+    plt.savefig('comparison_plot.png')
