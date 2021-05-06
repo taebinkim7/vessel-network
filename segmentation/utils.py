@@ -286,4 +286,4 @@ def comparison_plot(n_patches, data_dir):
             else:
                 plt.imshow(patch, cmap = 'gray')
             plt.axis('off')
-    plt.savefig('comparison_plot.png')
+    plt.savefig(os.path.join(data_dir, 'comparison_plot.png'))

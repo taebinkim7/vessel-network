@@ -44,23 +44,26 @@ validation_mask_files = glob(os.path.join(validation_data_dir, 'masks/*'))
 
 # save patches that contain vessels
 for mask_file in validation_mask_files:
-    mask = np.array(Image.open(mask_file)) / 255
+    mask = np.array(Image.open(mask_file))
+    if np.max(mask) > 1:
+        mask = mask / 255
     mask_block_patches = make_block_patches(mask, PATCH_SIZE)
     mask_patches = np.array(list(mask_block_patches.values()))
     vessel_idx = list(map(vessel_threshold,
                           mask_patches,
-                          [0.1 for i in range(len(mask_patches))]))
-    mask_patches = mask_patches[vessel_idx]
-    save_patches(mask_patches, 'mask', 'validation_data_dir')
+                          [0.2 for i in range(len(mask_patches))]))
+    sample_idx = np.argsort(vessel_idx)[-30:]
+    mask_patches = mask_patches[sample_idx]
+    save_patches(mask_patches, 'mask', validation_data_dir)
 for image_file in validation_image_files:
     image = np.array(Image.open(image_file)) / 255
     image_block_patches = make_block_patches(image, PATCH_SIZE)
     image_patches = np.array(list(image_block_patches.values()))
-    image_patches = image_patches[vessel_idx]
-    save_patches(image_patches, 'image', 'validation_data_dir')
+    image_patches = image_patches[sample_idx]
+    save_patches(image_patches, 'image', validation_data_dir)
     prediction_patches = model(image_patches, training=False)
     prediction_patches = adjust_prediction(prediction_patches)
-    save_patches(prediction_patches, 'prediction', 'validation_data_dir')
+    save_patches(prediction_patches, 'prediction', validation_data_dir)
 
 # generate comparison plot
-comparison_plot(10, validation_data_dir)
+comparison_plot(5, validation_data_dir)
