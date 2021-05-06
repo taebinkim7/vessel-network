@@ -23,7 +23,7 @@ python test_unet.py
 ```
 One can adjust hyperparameters in both scripts but should use the same `PATCH_SIZE` and `LOG_NUM`. Pretrained weights are also available in `segmentation/ckpt_1`.
 
-After training the UNet with the current hyperparameters, we get the following results:
+After training the UNet with the current hyperparameters, we get the following results:  
 The comparison plot for the train data looks like
 ![Comparison plot for train data](data/train_data/comparison_plot.png)
 , and the one for the validation data looks like
