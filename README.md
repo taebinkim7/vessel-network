@@ -23,7 +23,7 @@ python test_unet.py
 ```
 One can adjust hyperparameters in both scripts but should use the same `PATCH_SIZE` and `LOG_NUM`. Pretrained weights are also available in `segmentation/ckpt_1`.
 
-[Comparison plot](data/train_data/comparison_plot.png)
+![Comparison plot](data/train_data/comparison_plot.png)
 
 ## Vessel Network Reconstruction & Network Feature Extraction
 We reconstruct a vessel network using the predicted binary images in `data/test_data/predictions`. To construct a vessel network, run
