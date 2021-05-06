@@ -261,7 +261,7 @@ def save_patches(patches, patch_type, data_dir):
     os.makedirs(os.path.join(data_dir, 'patches'), exist_ok=True)
     for i, patch in enumerate(patches):
         if patch.shape[2] == 1:
-            patch.reshape(patch.shape[0:2])
+            patch = patch.reshape(patch.shape[0:2])
         patch = patch.astype(int)
         if np.max(patch) <= 1:
             patch = np.uint8(patch * 255)
