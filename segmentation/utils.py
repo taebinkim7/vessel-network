@@ -274,16 +274,19 @@ def comparison_plot(n_patches, data_dir):
     """
     Generate a comparison plot of image, mask, and prediction patches
     """
-    fig = plt.figure(figsize=(10 * n_patches, 10 * 3))
+    plt.figure(figsize=(5 * n_patches, 5 * 3))
     for i in range(n_patches):
         for j, patch_type in enumerate(['image', 'mask', 'prediction']):
             patch_file = os.path.join(data_dir, 'patches',
-                                      '{}_patch_{}.png'.format(patch_type, i))
+                                        '{}_patch_{}.png'.format(patch_type, i))
             patch = np.array(Image.open(patch_file))
             plt.subplot(3, n_patches, i + j * n_patches + 1)
+            if i == 0:
+                plt.ylabel(patch_type, fontsize=30)
+            plt.xticks([])
+            plt.yticks([])
             if patch_type == 'image':
                 plt.imshow(patch)
             else:
                 plt.imshow(patch, cmap = 'gray')
-            plt.axis('off')
     plt.savefig(os.path.join(data_dir, 'comparison_plot.png'))
