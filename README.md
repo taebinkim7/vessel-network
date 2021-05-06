@@ -27,6 +27,7 @@ After training the UNet with the current hyperparameters, we get the following r
 
 The comparison plot for the train data looks like
 ![Comparison plot for train data](data/train_data/comparison_plot.png | width = 70)
+<img src="data/train_data/comparison_plot.png" width="70">
 
 , and the one for the validation data looks like
 ![Comparison plot for validation data](data/validation_data/comparison_plot.png)
