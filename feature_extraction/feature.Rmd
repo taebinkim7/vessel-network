@@ -1,8 +1,8 @@
 ---
 title: "Feature Extraction"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -211,4 +211,70 @@ knitr::kable(data.frame(p2 = mean(my_image2), p3 = mean(my_image3), p4 = mean(my
 
 VAD: ratio of the total image area occupied by blood vessel area
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4901200/pdf/JBO-021-066008.pdf (page 4)
+
+
+## Bar plots
+
+```{r}
+library(gridExtra)
+library(cowplot)
+
+## VAD: ratio of the total image area occupied by blood vessel area
+f6 = c(mean(my_image2), mean(my_image3), mean(my_image4),
+       mean(my_image5), mean(my_image6), mean(my_image7))
+
+## 
+f7 = c(max(p2_degree$distance), max(p3_degree$distance), max(p4_degree$distance), 
+       max(p5_degree$distance), max(p6_degree$distance), max(p7_degree$distance))
+
+df <- data.frame(miceage=c("p2","p3","p4","p5","p6","p7"),
+                 f1 = f1, f2 = f2, f3 = f3, f4 = f4, f5 = f5, f6 = f6, f7 = f7)
+
+
+p1 <- ggplot(data=df, aes(x=miceage, y=f1, fill = miceage)) +
+  geom_bar(stat="identity", width=0.8) +
+  scale_fill_brewer(palette="Blues", "Mice age") + 
+  labs(x = "Mice Age", y = "Number of Branchpoints") 
+
+p2 <- ggplot(data=df, aes(x=miceage, y=f2, fill = miceage)) +
+  geom_bar(stat="identity", width=0.8) +
+  scale_fill_brewer(palette="Blues", "Mice age") + 
+  labs(x = "Mice Age", y = "Number of Vessel Edges")
+
+p3 <- ggplot(data=df, aes(x=miceage, y=f3, fill = miceage)) +
+  geom_bar(stat="identity", width=0.8) +
+  scale_fill_brewer(palette="Blues", "Mice age") + 
+  labs(x = "Mice Age", y = "Mean of Vessel Length")
+
+p4 <- ggplot(data=df, aes(x=miceage, y=f4, fill = miceage)) +
+  geom_bar(stat="identity", width=0.8) +
+  scale_fill_brewer(palette="Blues", "Mice age") + 
+  labs(x = "Mice Age", y = "Mean of Vessel Tortuosity")
+
+p5 <- ggplot(data=df, aes(x=miceage, y=f5, fill = miceage)) +
+  geom_bar(stat="identity", width=0.8) +
+  scale_fill_brewer(palette="Blues", "Mice age") + 
+  labs(x = "Mice Age", y = "Mean of Vessel Width")
+  
+p6 <- ggplot(data=df, aes(x=miceage, y=f6, fill = miceage)) +
+  geom_bar(stat="identity", width=0.8) +
+  scale_fill_brewer(palette="Blues", "Mice age") + 
+  labs(x = "Mice Age", y = "VAD")
+
+p7 <- ggplot(data=df, aes(x=miceage, y=f7, fill = miceage)) +
+  geom_bar(stat="identity", width=0.8) +
+  scale_fill_brewer(palette="Blues", "Mice age") + 
+  labs(x = "Mice Age", y = "Distance from center to end")
+
+#grid.arrange(p1,p2,p3,p4,p5,p6,p7, ncol = 1)
+#plot_grid(p1,p2,p3,p4,p5,p6,p7, nrow = 4, labels = "AUTO")
+
+p1
+p2
+p3
+p4
+p5
+p6
+p7
+```   
 
