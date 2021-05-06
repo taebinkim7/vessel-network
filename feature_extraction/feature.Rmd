@@ -1,8 +1,8 @@
 ---
 title: "Feature Extraction"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -191,6 +191,24 @@ knitr::kable(as.data.frame(m), align="c")
 ```   
 
 
+## Density and Boxplot
+
+```{r}
+p1to7_all <- rbind(p2_all, p3_all, p4_all, p5_all, p6_all, p7_all)
+p1to7_all$stage <- c(rep("p2", nrow(p2_all)), rep("p3", nrow(p3_all)), rep("p4", nrow(p4_all)), rep("p5", nrow(p5_all)), rep("p6", nrow(p6_all)), rep("p7", nrow(p7_all)))
+
+p1to7_all_long <- gather(p1to7_all, key = "feature", value = "value",
+       line, length, width, tortuosity)
+
+ggplot(p1to7_all_long, mapping = aes(x = value, fill = stage, color = stage)) + facet_wrap(.~feature, nrow = 2, scales = "free")  + geom_line(stat = "density")+theme(legend.position = "bottom")+ guides(fill=guide_legend(nrow=1,byrow=TRUE))
+
+ggplot(p1to7_all_long, aes(x=stage, y=value, fill=stage)) + facet_wrap(.~feature, nrow = 2, scales = "free") +
+  geom_boxplot(width = 0.8, outlier.size=0.4) +theme(legend.position = "bottom")+  scale_x_discrete(expand=c(0.24, 0)) + scale_fill_manual(values = c("#FC4E07", "#E69F00", "#F0E442", "#009E73", "#56B4E9","#CC79A7")) + guides(fill=guide_legend(nrow=1,byrow=TRUE))
+
+```
+
+It seems that width variable has less variance as mouse grows.
+
 ## Area
 
 ```{r}
@@ -211,4 +229,5 @@ knitr::kable(data.frame(p2 = mean(my_image2), p3 = mean(my_image3), p4 = mean(my
 
 VAD: ratio of the total image area occupied by blood vessel area
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4901200/pdf/JBO-021-066008.pdf (page 4)
+
 
