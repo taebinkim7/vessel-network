@@ -96,5 +96,7 @@ def draw_curve(image, graph):
     
     return image
 
+def draw_graph3(image, graph, center=True):
 
-
+    tmp1 = draw_edges(image, graph)
+    return draw_curve(tmp1, graph)
