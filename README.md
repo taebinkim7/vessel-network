@@ -11,7 +11,7 @@ pip install -r requirements.txt
 ```
 
 ## Blood Vessel Segmentation
-First, save your training and validation data (images and masks) in `data/train_data` and `data/validation_data`, respectively.
+First, save training and validation data (images and masks) in `data/train_data` and `data/validation_data`, respectively.
 To train the UNet model run
 ```
 cd segmentation
@@ -21,7 +21,7 @@ Save test data (images) in `data/test_data`, then to generate predicted masks ru
 ```
 python test_unet.py
 ```
-You can adjust hyperparameters in both scripts. Use the same `PATCH_SIZE` and `LOG_NUM`.
+One can adjust hyperparameters in both scripts but should use the same `PATCH_SIZE` and `LOG_NUM`. Pretrained weights are also available in `segmentation/ckpt_1`.
 
 ## Vessel Network Reconstruction & Network Feature Extraction
 We reconstruct a vessel network using the predicted binary images in `data/test_data/predictions`. To construct a vessel network, run
@@ -29,8 +29,8 @@ We reconstruct a vessel network using the predicted binary images in `data/test_
 cd ../feature_extraction
 feature_extraction.py
 ```
-The reconstructed network is saved in `feature_extraction/feature` by `imagename_network.png`.           
-The above code also extracts the features of the network (e.g., vessel length, branching point, vessel segment, tortuosity, etc.) and they are saved in `feature_extraction/feature` by `imagename_alldata.xlsx` and `imagename_degreedata.xlsx`.
+The reconstructed network is saved in `feature_extraction/feature` as `imagename_network.png`.           
+The above code also extracts the features of the network (e.g., vessel length, branching point, vessel segment, tortuosity, etc.) and they are saved in `feature_extraction/feature` as `imagename_alldata.xlsx` and `imagename_degreedata.xlsx`.
 
 ## Vessel Network Analysis
 
