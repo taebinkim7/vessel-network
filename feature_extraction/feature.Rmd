@@ -232,38 +232,38 @@ df <- data.frame(miceage=c("p2","p3","p4","p5","p6","p7"),
 
 
 p1 <- ggplot(data=df, aes(x=miceage, y=f1, fill = miceage)) +
-  geom_bar(stat="identity", width=0.8) +
-  scale_fill_brewer(palette="Blues", "Mice age") + 
+  geom_bar(stat="identity", width=0.8, show.legend=FALSE) +
+  scale_fill_brewer(palette="Blues") + 
   labs(x = "Mice Age", y = "Number of Branchpoints") 
 
 p2 <- ggplot(data=df, aes(x=miceage, y=f2, fill = miceage)) +
-  geom_bar(stat="identity", width=0.8) +
-  scale_fill_brewer(palette="Blues", "Mice age") + 
+  geom_bar(stat="identity", width=0.8, show.legend=FALSE) +
+  scale_fill_brewer(palette="Blues") + 
   labs(x = "Mice Age", y = "Number of Vessel Edges")
 
 p3 <- ggplot(data=df, aes(x=miceage, y=f3, fill = miceage)) +
-  geom_bar(stat="identity", width=0.8) +
-  scale_fill_brewer(palette="Blues", "Mice age") + 
+  geom_bar(stat="identity", width=0.8, show.legend=FALSE) +
+  scale_fill_brewer(palette="Blues") + 
   labs(x = "Mice Age", y = "Mean of Vessel Length")
 
 p4 <- ggplot(data=df, aes(x=miceage, y=f4, fill = miceage)) +
-  geom_bar(stat="identity", width=0.8) +
-  scale_fill_brewer(palette="Blues", "Mice age") + 
+  geom_bar(stat="identity", width=0.8, show.legend=FALSE) +
+  scale_fill_brewer(palette="Blues") + 
   labs(x = "Mice Age", y = "Mean of Vessel Tortuosity")
 
 p5 <- ggplot(data=df, aes(x=miceage, y=f5, fill = miceage)) +
-  geom_bar(stat="identity", width=0.8) +
-  scale_fill_brewer(palette="Blues", "Mice age") + 
+  geom_bar(stat="identity", width=0.8, show.legend=FALSE) +
+  scale_fill_brewer(palette="Blues") + 
   labs(x = "Mice Age", y = "Mean of Vessel Width")
   
 p6 <- ggplot(data=df, aes(x=miceage, y=f6, fill = miceage)) +
-  geom_bar(stat="identity", width=0.8) +
-  scale_fill_brewer(palette="Blues", "Mice age") + 
+  geom_bar(stat="identity", width=0.8, show.legend=FALSE) +
+  scale_fill_brewer(palette="Blues") + 
   labs(x = "Mice Age", y = "VAD")
 
 p7 <- ggplot(data=df, aes(x=miceage, y=f7, fill = miceage)) +
-  geom_bar(stat="identity", width=0.8) +
-  scale_fill_brewer(palette="Blues", "Mice age") + 
+  geom_bar(stat="identity", width=0.8, show.legend=FALSE) +
+  scale_fill_brewer(palette="Blues") + 
   labs(x = "Mice Age", y = "Distance from center to end")
 
 #grid.arrange(p1,p2,p3,p4,p5,p6,p7, ncol = 1)
@@ -276,5 +276,49 @@ p4
 p5
 p6
 p7
+
+ggplot(data=df, aes(x=c("p2","p3","p4","p5","p6","p7"), y=c(0,f1[2:6]/f1[1:5]-1), group = 1)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Mice Age", y = "Increase rate") +
+  ylim(-0.5,1.5) 
+
+ggplot(data=df, aes(x=c("p2","p3","p4","p5","p6","p7"), y=c(0,f2[2:6]/f2[1:5]-1), group = 1)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Mice Age", y = "Increase rate") +
+  ylim(-0.5,1.5) 
+
+ggplot(data=df, aes(x=c("p2","p3","p4","p5","p6","p7"), y=c(0,f3[2:6]/f3[1:5]-1), group = 1)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Mice Age", y = "Increase rate") +
+  ylim(-0.5,1.5) 
+
+ggplot(data=df, aes(x=c("p2","p3","p4","p5","p6","p7"), y=c(0,f4[2:6]/f4[1:5]-1), group = 1)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Mice Age", y = "Increase rate") +
+  ylim(-0.5,1.5) 
+
+ggplot(data=df, aes(x=c("p2","p3","p4","p5","p6","p7"), y=c(0,f5[2:6]/f5[1:5]-1), group = 1)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Mice Age", y = "Increase rate") +
+  ylim(-0.5,1.5) 
+
+ggplot(data=df, aes(x=c("p2","p3","p4","p5","p6","p7"), y=c(0,f6[2:6]/f6[1:5]-1), group = 1)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Mice Age", y = "Increase rate") +
+  ylim(-0.5,1.5)
+
+ggplot(data=df, aes(x=c("p2","p3","p4","p5","p6","p7"), y=c(0,f7[2:6]/f7[1:5]-1), group = 1)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Mice Age", y = "Increase rate") +
+  ylim(-0.5,1.5)
+  
+
 ```   
 
