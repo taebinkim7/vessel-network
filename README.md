@@ -25,12 +25,11 @@ One can adjust hyperparameters in both scripts but should use the same `PATCH_SI
 
 After training the UNet with the current hyperparameters, we get the following results:  
 
-The comparison plot for the train data looks like
-![Comparison plot for train data](data/train_data/comparison_plot.png | width = 70)
+The comparison plot of image, mask, and prediction patches for the train data looks like
 <img src="data/train_data/comparison_plot.png" width="700">
 
 , and the one for the validation data looks like
-![Comparison plot for validation data](data/validation_data/comparison_plot.png)
+<img src="data/validation_data/comparison_plot.png" width="700">
 
 ## Vessel Network Reconstruction & Network Feature Extraction
 We reconstruct a vessel network using the predicted binary images in `data/test_data/predictions`. To construct a vessel network, run
