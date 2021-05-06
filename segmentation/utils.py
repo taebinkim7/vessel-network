@@ -262,8 +262,8 @@ def save_patches(patches, patch_type, data_dir):
     os.makedirs(os.path.join(data_dir, 'patches'), exist_ok=True)
     for i, patch in enumerate(patches):
         if patch.shape[2] == 1:
+            patch = patch.astype(int)
             patch = patch.reshape(patch.shape[0:2])
-        patch = patch.astype(int)
         if np.max(patch) <= 1:
             patch = np.uint8(patch * 255)
         patch_file = os.path.join(data_dir, 'patches',
@@ -281,6 +281,9 @@ def comparison_plot(n_patches, data_dir):
                                       '{}_patch_{}.png'.format(patch_type, i))
             patch = np.array(Image.open(patch_file))
             plt.subplot(3, n_patches, i + j * n_patches + 1)
-            plt.imshow(patch)
+            if patch_type == 'image':
+                plt.imshow(patch)
+            else:
+                plt.imshow(patch, cmap = 'gray')
             plt.axis('off')
     plt.savefig('comparison_plot.png')
