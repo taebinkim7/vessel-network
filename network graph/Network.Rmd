@@ -88,9 +88,11 @@ Adj_mat_generate = function(x){
         Adj_mat[i,j] = 0
       }
       else{
-        
         key.from = identified_nodes_key[i]
         key.to = identified_nodes_key[j]
+        
+        Adj_mat[i,j] = length(node1[which(node1 == key.from & node2 == key.to)])
+        Adj_mat[j,i] = Adj_mat[i,j]
       }
       j = j+1
     }

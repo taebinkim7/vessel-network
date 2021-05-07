@@ -80,6 +80,10 @@ Adj_mat_generate = function(x){
         
         key.from = identified_nodes_key[i]
         key.to = identified_nodes_key[j]
+        
+        Adj_mat[i,j] = length(node1[which(node1 == key.from & node2 == key.to)])
+        Adj_mat[j,i] = Adj_mat[i,j]
+        
       }
       j = j+1
     }
@@ -87,7 +91,7 @@ Adj_mat_generate = function(x){
     print(i)
   }
   
-  return(list(Adj_mat,weight_line,weight_length,weight_width,weight_tortuosity))
+  return(list(Adj_mat))
 }
 
 p2.clean = Adj_mat_generate(all.dat.p2)
@@ -172,7 +176,7 @@ G.membership = ggplot(dt.membership, aes(y=Freq,x=factor(Membership),color=facto
   ylab("Frequency") +
   xlab("Membership") + 
   scale_color_manual(name="P",values=c("red","orange","pink","green","black","blue")) +
-  geom_point(cex=1)
+  geom_point(cex=2)
 G.membership
 
 # Addtional plots for the above
