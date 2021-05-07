@@ -17,11 +17,17 @@ To train the UNet model run
 cd segmentation
 python train_unet.py
 ```
+Our model can be trained with either GPU or CPU. CUDA version 11.0 or above and cuDNN version 8.0 or above are needed to train the model on GPU.
+```
+conda install -c nvidia cudnn
+```
+will let you download the newest version of CUDA and cuDNN.
+
 Save test data (images) in `data/test_data`, then to generate predicted masks run
 ```
 python test_unet.py
 ```
-One can adjust hyperparameters in both scripts but should use the same `PATCH_SIZE` and `LOG_NUM`. Pretrained weights are also available in `segmentation/ckpt_1`.
+You can adjust hyperparameters in both scripts but should use the same `PATCH_SIZE` and `LOG_NUM`. Pretrained weights are also available in `segmentation/ckpt_1`.
 
 After training the UNet with the current hyperparameters, we get the following results:  
 
