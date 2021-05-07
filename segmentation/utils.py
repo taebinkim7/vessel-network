@@ -282,7 +282,7 @@ def comparison_plot(n_patches, data_dir):
             patch = np.array(Image.open(patch_file))
             plt.subplot(3, n_patches, i + j * n_patches + 1)
             if i == 0:
-                plt.ylabel(patch_type, fontsize=30)
+                plt.ylabel(patch_type, fontsize=45)
             plt.xticks([])
             plt.yticks([])
             if patch_type == 'image':
