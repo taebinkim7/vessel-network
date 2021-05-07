@@ -18,10 +18,7 @@ cd segmentation
 python train_unet.py
 ```
 Our model can be trained with either GPU or CPU. CUDA version 11.0 or above and cuDNN version 8.0 or above are needed to train the model on GPU.
-```
-conda install -c nvidia cudnn
-```
-will let you download the newest version of CUDA and cuDNN.
+`conda install -c nvidia cudnn` will let you download the newest version of CUDA and cuDNN.
 
 Save test data (images) in `data/test_data`, then to generate predicted masks run
 ```
