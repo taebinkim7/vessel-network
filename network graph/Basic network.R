@@ -132,14 +132,14 @@ G.deg = ggplot(dt.degree, aes(y=Freq,x=factor(Deg),color=factor(P),group=factor(
           geom_point()
 G.deg
 
-par(mar=c(0,0,0,0))
+par(mar=c(1,1,1,1))
 par(mfrow=c(2,3))
-plot(G2,vertex.label=NA,vertex.size=1,vertex.color="red")
-plot(G3,vertex.label=NA,vertex.size=1,vertex.color="orange")
-plot(G4,vertex.label=NA,vertex.size=1,vertex.color="magenta")
-plot(G5,vertex.label=NA,vertex.size=1,vertex.color="green")
-plot(G6,vertex.label=NA,vertex.size=1,vertex.color="blue")
-plot(G7,vertex.label=NA,vertex.size=1,vertex.color="black")
+plot(G2,vertex.label=NA,vertex.size=1,vertex.color="red",main="P2")
+plot(G3,vertex.label=NA,vertex.size=1,vertex.color="orange",main="P3")
+plot(G4,vertex.label=NA,vertex.size=1,vertex.color="magenta",main="P4")
+plot(G5,vertex.label=NA,vertex.size=1,vertex.color="green",main="P5")
+plot(G6,vertex.label=NA,vertex.size=1,vertex.color="blue",main="P6")
+plot(G7,vertex.label=NA,vertex.size=1,vertex.color="black",main="P7")
 
 
 # Run clustering by edge betweenness:
