@@ -53,8 +53,8 @@ all.dat.p4 = read_excel("p4-fro_alldata.xlsx")
 all.dat.p5 = read_excel("p5-fro_alldata.xlsx")
 all.dat.p6 = read_excel("p6-fro_alldata.xlsx")
 all.dat.p7 = read_excel("p7-fro_alldata.xlsx")
-# all.dat.p7.x0 = read_excel("p7-x 0_alldata.xlsx")
-# all.dat.N.129 = read_excel("N_129__alldata.xlsx")
+all.dat.p7.x0 = read_excel("p7-x 0_alldata.xlsx")
+all.dat.N.129 = read_excel("N_129__alldata.xlsx")
 
 
 Adj_mat_generate = function(x){
@@ -109,12 +109,12 @@ G6 = graph_from_adjacency_matrix(p6.clean[[1]],mode="undirected")
 G7 = graph_from_adjacency_matrix(p7.clean[[1]],mode="undirected")
 
 # Same information as spatial density of nodes.
-dt.degree.p2 = data.frame(as.data.frame(table(degree(G2))), P=rep(2,length(table(degree(G2)))))
-dt.degree.p3 = data.frame(as.data.frame(table(degree(G3))), P=rep(3,length(table(degree(G3)))))
-dt.degree.p4 = data.frame(as.data.frame(table(degree(G4))), P=rep(4,length(table(degree(G4)))))
-dt.degree.p5 = data.frame(as.data.frame(table(degree(G5))), P=rep(5,length(table(degree(G5)))))
-dt.degree.p6 = data.frame(as.data.frame(table(degree(G6))), P=rep(6,length(table(degree(G6)))))
-dt.degree.p7 = data.frame(as.data.frame(table(degree(G7))), P=rep(7,length(table(degree(G7)))))
+dt.degree.p2 = data.frame(as.data.frame(table(degree(G2))), P=rep("P2",length(table(degree(G2)))))
+dt.degree.p3 = data.frame(as.data.frame(table(degree(G3))), P=rep("P3",length(table(degree(G3)))))
+dt.degree.p4 = data.frame(as.data.frame(table(degree(G4))), P=rep("P4",length(table(degree(G4)))))
+dt.degree.p5 = data.frame(as.data.frame(table(degree(G5))), P=rep("P5",length(table(degree(G5)))))
+dt.degree.p6 = data.frame(as.data.frame(table(degree(G6))), P=rep("P6",length(table(degree(G6)))))
+dt.degree.p7 = data.frame(as.data.frame(table(degree(G7))), P=rep("P7",length(table(degree(G7)))))
 dt.degree = rbind(dt.degree.p2,dt.degree.p3,dt.degree.p4,dt.degree.p5,dt.degree.p6,dt.degree.p7)
 names(dt.degree) = c("Deg","Freq","P")
 
@@ -122,7 +122,7 @@ names(dt.degree) = c("Deg","Freq","P")
 G.deg = ggplot(dt.degree, aes(y=Freq,x=factor(Deg),color=factor(P),group=factor(P))) +
           ylab("Frequency") +
           scale_x_discrete(name ="Degree", limits=c("0","1","2","3","4","5","6","7","8","9","10")) + 
-          scale_color_discrete(name="P") +
+          scale_color_discrete(name="Mice age") +
           geom_line(cex=1)
 G.deg
 
@@ -152,17 +152,17 @@ length(sort(unique(Cl.betw.7$membership),decreasing=FALSE))
 
 # Per each group, how many members are joining
 dt.membership.p2 = data.frame(as.data.frame(table(Cl.betw.2$membership)), 
-                              P=rep(2,length(table(Cl.betw.2$membership))))
+                              P=rep("P2",length(table(Cl.betw.2$membership))))
 dt.membership.p3 = data.frame(as.data.frame(table(Cl.betw.3$membership)), 
-                              P=rep(3,length(table(Cl.betw.3$membership))))
+                              P=rep("P3",length(table(Cl.betw.3$membership))))
 dt.membership.p4 = data.frame(as.data.frame(table(Cl.betw.4$membership)), 
-                              P=rep(4,length(table(Cl.betw.4$membership))))
+                              P=rep("P4",length(table(Cl.betw.4$membership))))
 dt.membership.p5 = data.frame(as.data.frame(table(Cl.betw.5$membership)), 
-                              P=rep(5,length(table(Cl.betw.5$membership))))
+                              P=rep("P5",length(table(Cl.betw.5$membership))))
 dt.membership.p6 = data.frame(as.data.frame(table(Cl.betw.6$membership)), 
-                              P=rep(6,length(table(Cl.betw.6$membership))))
+                              P=rep("P6",length(table(Cl.betw.6$membership))))
 dt.membership.p7 = data.frame(as.data.frame(table(Cl.betw.7$membership)), 
-                              P=rep(7,length(table(Cl.betw.7$membership))))
+                              P=rep("P7",length(table(Cl.betw.7$membership))))
 dt.membership = rbind(dt.membership.p2,
                       dt.membership.p3,
                       dt.membership.p4,
@@ -175,7 +175,7 @@ G.membership = ggplot(dt.membership, aes(y=Freq,x=factor(Membership),color=facto
   scale_x_discrete(breaks=seq(1,190,10))+
   ylab("Frequency") +
   xlab("Membership") + 
-  scale_color_manual(name="P",values=c("red","orange","pink","green","black","blue")) +
+  scale_color_manual(name="Mice age",values=c("red","orange","pink","green","black","blue")) +
   geom_point(cex=2)
 G.membership
 
