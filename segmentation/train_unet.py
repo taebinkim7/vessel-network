@@ -12,7 +12,7 @@ ALPHA = 0.001
 BATCH_SIZE = 32
 LEARNING_RATE = 1e-4
 LOG_NUM = 1
-EPOCHS = 20
+EPOCHS = 10
 
 # set paths
 train_data_dir = '../data/train_data'
