@@ -17,7 +17,7 @@ deg_density = function(x,i){
     prop.table() %>%
     cumsum() %>%
     rev()
-  dt.frame = data.frame(miceage = rep(paste0("p",i,sep=""),max(degree)),
+  dt.frame = data.frame(miceage = rep(paste0("P",i,sep=""),max(degree)),
                         degree = 1:max(degree), 
                         density = deg_density)
   
@@ -39,12 +39,17 @@ deg_spatial_density = rbind(deg.density.p2,
 
 deg_spatial_density$miceage = as.factor(deg_spatial_density$miceage)
 deg_spatial_density$degree = as.factor(deg_spatial_density$degree)
-ggplot(deg_spatial_density, aes(x = degree, y = density, color = miceage, group = miceage)) +
+G.spatial = ggplot(deg_spatial_density, aes(x = degree, y = density, color = miceage, group = miceage)) +
   geom_line() +
   geom_point() +
-  labs(x = "Number k of vessels branching out for one node",
-       y = "% of branching points with node density >= k") +
-  scale_color_discrete("Mice age")
+  labs(x = "Degree",
+       y = "Node spatial density") +
+  scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","blue","black"))
+
+G.spatial
+
+# y = Density of branching points exceeds degree x
+# x = Number k of vessels branching out from single node
 
 
 all.dat.p2 = read_excel("p2-fro_alldata.xlsx")
@@ -122,17 +127,20 @@ names(dt.degree) = c("Deg","Freq","P")
 G.deg = ggplot(dt.degree, aes(y=Freq,x=factor(Deg),color=factor(P),group=factor(P))) +
           ylab("Frequency") +
           scale_x_discrete(name ="Degree", limits=c("0","1","2","3","4","5","6","7","8","9","10")) + 
-          scale_color_discrete(name="Mice age") +
-          geom_line(cex=1)
+          scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","blue","black")) +
+          geom_line()+
+          geom_point()
 G.deg
 
 par(mar=c(0,0,0,0))
-plot(G2,vertex.label=NA,vertex.size=1,vertex.color="grey2")
-plot(G3,vertex.label=NA,vertex.size=1,vertex.color="grey3")
-plot(G4,vertex.label=NA,vertex.size=1,vertex.color="grey4")
-plot(G5,vertex.label=NA,vertex.size=1,vertex.color="grey5")
-plot(G6,vertex.label=NA,vertex.size=1,vertex.color="grey6")
-plot(G7,vertex.label=NA,vertex.size=1,vertex.color="grey7")
+par(mfrow=c(2,3))
+plot(G2,vertex.label=NA,vertex.size=1,vertex.color="red")
+plot(G3,vertex.label=NA,vertex.size=1,vertex.color="orange")
+plot(G4,vertex.label=NA,vertex.size=1,vertex.color="magenta")
+plot(G5,vertex.label=NA,vertex.size=1,vertex.color="green")
+plot(G6,vertex.label=NA,vertex.size=1,vertex.color="blue")
+plot(G7,vertex.label=NA,vertex.size=1,vertex.color="black")
+
 
 # Run clustering by edge betweenness:
 Cl.betw.2 = cluster_edge_betweenness(graph=G2)
@@ -175,7 +183,7 @@ G.membership = ggplot(dt.membership, aes(y=Freq,x=factor(Membership),color=facto
   scale_x_discrete(breaks=seq(1,190,10))+
   ylab("Frequency") +
   xlab("Membership") + 
-  scale_color_manual(name="Mice age",values=c("red","orange","pink","green","black","blue")) +
+  scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","black","blue")) +
   geom_point(cex=2)
 G.membership
 
@@ -197,6 +205,91 @@ plot(Cl.betw.4,G4,vertex.label=NA,vertex.size=1)
 plot(Cl.betw.5,G5,vertex.label=NA,vertex.size=1) 
 plot(Cl.betw.6,G6,vertex.label=NA,vertex.size=1) 
 plot(Cl.betw.7,G7,vertex.label=NA,vertex.size=1) 
+
+# Run clustering by edge betweenness:
+Cl.louvain.2 = cluster_louvain(graph=G2)
+Cl.louvain.3 = cluster_louvain(graph=G3)
+Cl.louvain.4 = cluster_louvain(graph=G4)
+Cl.louvain.5 = cluster_louvain(graph=G5)
+Cl.louvain.6 = cluster_louvain(graph=G6)
+Cl.louvain.7 = cluster_louvain(graph=G7)
+
+# Number of groups
+length(sort(unique(Cl.louvain.2$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.3$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.4$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.5$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.6$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.7$membership),decreasing=FALSE))
+
+# Per each group, how many members are joining
+dt.membership.louvain.p2 = data.frame(as.data.frame(table(Cl.louvain.2$membership)), 
+                              P=rep("P2",length(table(Cl.louvain.2$membership))))
+dt.membership.louvain.p3 = data.frame(as.data.frame(table(Cl.louvain.3$membership)), 
+                              P=rep("P3",length(table(Cl.louvain.3$membership))))
+dt.membership.louvain.p4 = data.frame(as.data.frame(table(Cl.louvain.4$membership)), 
+                              P=rep("P4",length(table(Cl.louvain.4$membership))))
+dt.membership.louvain.p5 = data.frame(as.data.frame(table(Cl.louvain.5$membership)), 
+                              P=rep("P5",length(table(Cl.louvain.5$membership))))
+dt.membership.louvain.p6 = data.frame(as.data.frame(table(Cl.louvain.6$membership)), 
+                              P=rep("P6",length(table(Cl.louvain.6$membership))))
+dt.membership.louvain.p7 = data.frame(as.data.frame(table(Cl.louvain.7$membership)), 
+                              P=rep("P7",length(table(Cl.louvain.7$membership))))
+dt.membership.louvain = rbind(dt.membership.louvain.p2,
+                      dt.membership.louvain.p3,
+                      dt.membership.louvain.p4,
+                      dt.membership.louvain.p5,
+                      dt.membership.louvain.p6,
+                      dt.membership.louvain.p7)
+names(dt.membership.louvain) = c("Membership","Freq","P")
+
+G.membership.louvain = ggplot(dt.membership.louvain, aes(y=Freq,x=factor(Membership),color=factor(P))) +
+  scale_x_discrete(breaks=seq(1,190,10))+
+  ylab("Frequency") +
+  xlab("Membership") + 
+  scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","black","blue")) +
+  geom_point(cex=2)
+G.membership.louvain
+
+# Addtional plots for the above
+par(mar=c(5,5,5,5))
+plot(table(Cl.louvain.2$membership))
+plot(table(Cl.louvain.3$membership))
+plot(table(Cl.louvain.4$membership))
+plot(table(Cl.louvain.5$membership))
+plot(table(Cl.louvain.6$membership))
+plot(table(Cl.louvain.7$membership))
+
+
+# Final plots after clustering
+par(mar=c(0,0,0,0))
+plot(Cl.louvain.2,G2,vertex.label=NA,vertex.size=1) 
+plot(Cl.louvain.3,G3,vertex.label=NA,vertex.size=1) 
+plot(Cl.louvain.4,G4,vertex.label=NA,vertex.size=1) 
+plot(Cl.louvain.5,G5,vertex.label=NA,vertex.size=1) 
+plot(Cl.louvain.6,G6,vertex.label=NA,vertex.size=1) 
+plot(Cl.louvain.7,G7,vertex.label=NA,vertex.size=1) 
+
+
+###################################################################
+
+set.seed(1234)
+dt.resample.p2 = sample(x=deg.dat.p2$nodes,size=length(deg.dat.p2$nodes),prob=deg.dat.p2$degree/sum(deg.dat.p2$degree),replace=TRUE)
+dt.resample.p3 = sample(x=deg.dat.p3$nodes,size=length(deg.dat.p3$nodes),prob=deg.dat.p3$degree/sum(deg.dat.p3$degree),replace=TRUE)
+dt.resample.p4 = sample(x=deg.dat.p4$nodes,size=length(deg.dat.p4$nodes),prob=deg.dat.p4$degree/sum(deg.dat.p4$degree),replace=TRUE)
+dt.resample.p5 = sample(x=deg.dat.p5$nodes,size=length(deg.dat.p5$nodes),prob=deg.dat.p5$degree/sum(deg.dat.p5$degree),replace=TRUE)
+dt.resample.p6 = sample(x=deg.dat.p6$nodes,size=length(deg.dat.p6$nodes),prob=deg.dat.p6$degree/sum(deg.dat.p6$degree),replace=TRUE)
+dt.resample.p7 = sample(x=deg.dat.p7$nodes,size=length(deg.dat.p7$nodes),prob=deg.dat.p7$degree/sum(deg.dat.p7$degree),replace=TRUE)
+
+plot(table(dt.resample.p2))
+plot(table(dt.resample.p3))
+plot(table(dt.resample.p4))
+plot(table(dt.resample.p5))
+plot(table(dt.resample.p6))
+plot(table(dt.resample.p7))
+
+
+###################################################################
 
 setwd("D:/STOR893-Zhang/vessel-network/network graph/")
 save.image("Data.basic.network.RData")
