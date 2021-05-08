@@ -84,6 +84,9 @@ for path, subdirs, files in os.walk(imgs_dir): #list all files, directories in t
         y=[y for (x,y) in nodes]
         x1=int(np.min(x)+(np.max(x)-np.min(x))/2)
         y1=int(np.min(y)+(np.max(y)-np.min(y))/2)
+
+        x1 = int((np.percentile(x, 5) + np.percentile(x, 95)) / 2)
+        y1 = int((np.percentile(y, 5) + np.percentile(y, 95)) / 2)
         
         for n1,n2,data in graph.edges(data=True):
             centerdis1=euclidean((x1,y1),n2)
