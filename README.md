@@ -17,7 +17,7 @@ To train the U-Net model run
 cd segmentation
 python train_unet.py
 ```
-Our model can be trained with either GPU or CPU. CUDA version 11.0 or above and cuDNN version 8.0 or above are needed to train the model on GPU.
+Our model can be trained on either GPU or CPU. CUDA version 11.0 or above and cuDNN version 8.0 or above are needed to train the model on GPU.
 `conda install -c nvidia cudnn` will let you download the newest version of CUDA and cuDNN.
 
 Save test data (images) in `data/test_data`, then to generate predicted masks run
@@ -29,10 +29,10 @@ You can adjust hyperparameters in both scripts but should use the same `PATCH_SI
 After training the U-Net with the current hyperparameters, we get the following results:  
 
 The comparison plot of image, mask, and prediction patches for the train data looks like
-<img src="data/train_data/comparison_plot.png" width="700">
+<img src="data/train_data/comparison_plot.png" width="600">
 
 , and the one for the validation data looks like
-<img src="data/validation_data/comparison_plot.png" width="700">
+<img src="data/validation_data/comparison_plot.png" width="600">
 
 
 ## Vessel Network Reconstruction & Network Feature Extraction
