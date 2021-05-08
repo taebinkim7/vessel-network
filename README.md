@@ -3,8 +3,7 @@
 This repository was created to implement a blood vessel network analysis.
 
 ## Setup
-Create a venv, e.g., `conda create -n vessel-network python=3.7.2`.
-Then activate the venv and install the required packages using 
+Using python 3.7.2, (e.g., `conda create -n vessel-network python=3.7.2`, then `conda activate vessel-network`) install the required packages by running 
 ```
 conda activate vessel-network
 pip install -r requirements.txt
