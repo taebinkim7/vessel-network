@@ -10,7 +10,9 @@ pip install -r requirements.txt
 ```
 
 ## Blood Vessel Segmentation
-First, save training and validation data (images and masks) in `data/train_data` and `data/validation_data`, respectively.
+The first step of our analysis is vessel segmentation.
+
+Save training and validation data (images and masks) in `data/train_data` and `data/validation_data`, respectively.
 To train the U-Net model run
 ```
 cd segmentation
@@ -29,7 +31,7 @@ With the pretrained weights, the comparison plot of image, mask, and prediction 
 <img src="data/validation_data/comparison_plot.png" width="600">
 
 ## Vessel Network Reconstruction & Network Feature Extraction
-We reconstruct a vessel network using the predicted binary images in `data/test_data/predictions`. To construct a vessel network, run
+In the next step, we reconstruct a vessel network using the predicted binary images in `data/test_data/predictions`. To reconstruct a vessel network, run
 ```
 cd ../feature_extraction
 feature_extraction.py
