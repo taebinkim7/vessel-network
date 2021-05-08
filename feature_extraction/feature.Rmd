@@ -1,8 +1,8 @@
 ---
 title: "Feature Extraction"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -49,7 +49,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep("p2",max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("P2",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p3_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -57,7 +57,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep("p3",max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("P3",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p4_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -65,7 +65,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep("p4",max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("P4",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p5_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -73,7 +73,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep("p5",max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("P5",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p6_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -81,7 +81,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep("p6",max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("P6",max(degree)), degree = 1:max(degree), density = deg_density))
 
 degree = p7_degree$degree
 deg_density = table(degree)[max(degree):1] %>%
@@ -89,7 +89,7 @@ deg_density = table(degree)[max(degree):1] %>%
   cumsum() %>%
   rev()
 deg_spatial_density = rbind(deg_spatial_density, 
-                            data.frame(miceage = rep("p7",max(degree)), degree = 1:max(degree), density = deg_density))
+                            data.frame(miceage = rep("P7",max(degree)), degree = 1:max(degree), density = deg_density))
 
 deg_spatial_density$miceage = as.factor(deg_spatial_density$miceage)
 deg_spatial_density$degree = as.factor(deg_spatial_density$degree)
@@ -98,7 +98,7 @@ ggplot(deg_spatial_density, aes(x = degree, y = density, color = miceage, group 
   geom_point() +
   labs(x = "Number k of vessels branching out for one node",
        y = "% of branching points with node density >= k") +
-  scale_colour_discrete("Mice age")
+  scale_colour_discrete("Mice age")+scale_color_manual(values=c("red","orange","magenta","green","blue","black"))
 ```
 
 Reference: https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6076630
@@ -181,7 +181,7 @@ f5 = c(mean(p2_all$width),mean(p3_all$width),mean(p4_all$width),
   
   
 m = rbind(f1,f2,f3,f4,f5)
-colnames(m) = c("p2","p3","p4","p5","p6","p7")
+colnames(m) = c("P2","P3","P4","P5","P6","P7")
 rownames(m) = c("Number of Branchpoints", "Number of Vessel Edges","Mean of Vessel Length",
                 "Mean of Vessel Tortuosity","Mean of Vessel Width")
 
@@ -194,15 +194,16 @@ knitr::kable(as.data.frame(m), align="c")
 
 ```{r}
 p1to7_all <- rbind(p2_all, p3_all, p4_all, p5_all, p6_all, p7_all)
-p1to7_all$stage <- c(rep("p2", nrow(p2_all)), rep("p3", nrow(p3_all)), rep("p4", nrow(p4_all)), rep("p5", nrow(p5_all)), rep("p6", nrow(p6_all)), rep("p7", nrow(p7_all)))
+p1to7_all$stage <- c(rep("P2", nrow(p2_all)), rep("P3", nrow(p3_all)), rep("P4", nrow(p4_all)), rep("P5", nrow(p5_all)), rep("P6", nrow(p6_all)), rep("P7", nrow(p7_all)))
 
 colnames(p1to7_all) <- c("nodespair", "node1", "node2", "Vessel.Line", "Vessel.Length", "Vessel.Width", "wide_var", "Vessel.Tortuosity", "curve", "stage")
 
 p1to7_all_long <- gather(p1to7_all, key = "feature", value = "value",
                          Vessel.Line, Vessel.Length, Vessel.Width, Vessel.Tortuosity)
-ggplot(p1to7_all_long, mapping = aes(x = value, fill = stage, color = stage)) + facet_wrap(.~feature, nrow = 2, scales = "free")  + geom_line(stat = "density")+theme(legend.position = "bottom")+ guides(fill=guide_legend(nrow=1,byrow=TRUE))
+ggplot(p1to7_all_long, mapping = aes(x = value, fill = stage, color = stage)) + facet_wrap(.~feature, nrow = 2, scales = "free")  + geom_line(stat = "density")+theme(legend.position = "bottom")+ guides(color=guide_legend(nrow=1,byrow=TRUE))+scale_color_manual(values=c("red","orange","magenta","green","blue","black"))
+
 ggplot(p1to7_all_long, aes(x=stage, y=value, fill=stage)) + facet_wrap(.~feature, nrow = 2, scales = "free") +
-  geom_boxplot(width = 0.8, outlier.size=0.4) +theme(legend.position = "bottom")+  scale_x_discrete(expand=c(0.12, 0))+ scale_fill_manual(values = c("#FC4E07", "#E69F00", "#F0E442", "#009E73", "#56B4E9","#CC79A7"))+ guides(fill=guide_legend(nrow=1,byrow=TRUE))
+  geom_boxplot(width = 0.8, outlier.size=0.4) +theme(legend.position = "bottom")+  scale_x_discrete(expand=c(0.12, 0))+ scale_fill_manual(values = c("red","orange","magenta","green","blue","black"))+ guides(fill=guide_legend(nrow=1,byrow=TRUE))
 ```
 
 It seems that width variable has less variance as mouse grows.
@@ -245,7 +246,7 @@ f6 = c(mean(my_image2), mean(my_image3), mean(my_image4),
 f7 = c(max(p2_degree$distance), max(p3_degree$distance), max(p4_degree$distance), 
        max(p5_degree$distance), max(p6_degree$distance), max(p7_degree$distance))
 
-df <- data.frame(stage=c("p2","p3","p4","p5","p6","p7"),
+df <- data.frame(stage=c("P2","P3","P4","P5","P6","P7"),
                  f1 = f1, f2 = f2, f3 = f3, f4 = f4, f5 = f5, f6 = f6, f7 = f7)
 colnames(df) <- c("stage", "Number.of.Branchpoints", "Number.of.Vessel.Edges", "Mean.of.Vessel.Length",
                   "Mean.of.Vessel.Tortuosity", "Mean.of.Vessel.Width", "VAD", "Distance.from.center.to.end")
@@ -262,7 +263,7 @@ df_long$feature <- factor(df_long$feature, levels = c("Number.of.Branchpoints",
                                                      "Distance.from.center.to.end"))
 
 feature.p <- ggplot(data=df_long, aes(x=stage, y=value, fill = stage)) +
-  geom_bar(stat="identity", width=0.8, show.legend=FALSE)  + facet_wrap(.~feature, nrow = 1, scales = "free")+theme(strip.text = element_text(size=7.5)) + scale_fill_manual(values = c("#FC4E07", "#E69F00", "#F0E442", "#009E73", "#56B4E9","#CC79A7")) 
+  geom_bar(stat="identity", width=0.8, show.legend=FALSE)  + facet_wrap(.~feature, nrow = 1, scales = "free")+theme(strip.text = element_text(size=7.5)) + scale_fill_manual(values = c("red","orange","magenta","green","blue","black"))
 
 
 library(egg)
@@ -276,7 +277,7 @@ grid.arrange(grobs = lapply(
   height = unit(4, "cm")
 ))
 
-df.rate <- data.frame(stage=c("p2","p3","p4","p5","p6","p7"),
+df.rate <- data.frame(stage=c("P2","P3","P4","P5","P6","P7"),
                  f1 = c(0,f1[2:6]/f1[1:5]-1), f2 = c(0,f2[2:6]/f2[1:5]-1), 
                  f3 = c(0,f3[2:6]/f3[1:5]-1), f4 = c(0,f4[2:6]/f4[1:5]-1), 
                  f5 = c(0,f5[2:6]/f5[1:5]-1), f6 = c(0,f6[2:6]/f6[1:5]-1), 
@@ -298,7 +299,7 @@ df.rate_long$feature <- factor(df.rate_long$feature, levels = c("Number.of.Branc
                                                      "Distance.from.center.to.end"))
 
 rate.p <- ggplot(data=df.rate_long, aes(x=stage, y=Increase.rate, group = 1)) +
-  geom_point(aes(colour = factor(stage))) + geom_line() + facet_wrap(.~feature, nrow = 1) + theme(strip.text = element_text(size=7.5)) + scale_fill_manual(values = c("#FC4E07", "#E69F00", "#F0E442", "#009E73", "#56B4E9","#CC79A7"))+ scale_y_continuous(limits = c(-0.5, 1.5)) + theme(legend.position = "none")
+  geom_point(aes(colour = factor(stage))) + geom_line() + facet_wrap(.~feature, nrow = 1) + theme(strip.text = element_text(size=7.5)) + scale_color_manual(values = c("red","orange","magenta","green","blue","black"))+ scale_y_continuous(limits = c(-0.5, 1.5)) + theme(legend.position = "none")
 
 
 library(egg)
@@ -315,4 +316,4 @@ grid.arrange(grobs = lapply(
 ```   
 
 =======
->>>>>>> dd966e4653d2f0f66ce62b7246cceebe2b712041
+
