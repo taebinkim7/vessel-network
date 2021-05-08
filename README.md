@@ -26,14 +26,8 @@ python test_unet.py
 ```
 You can adjust hyperparameters in both scripts but should use the same `PATCH_SIZE` and `LOG_NUM`. Pretrained weights are also available in `segmentation/ckpt_1`.
 
-After training the U-Net with the current hyperparameters, we get the following results:  
-
-The comparison plot of image, mask, and prediction patches for the train data looks like
-<img src="data/train_data/comparison_plot.png" width="600">
-
-, and the one for the validation data looks like
+After training the U-Net with the current hyperparameters, the comparison plot of image, mask, and prediction patches for the validation data looks like
 <img src="data/validation_data/comparison_plot.png" width="600">
-
 
 ## Vessel Network Reconstruction & Network Feature Extraction
 We reconstruct a vessel network using the predicted binary images in `data/test_data/predictions`. To construct a vessel network, run
