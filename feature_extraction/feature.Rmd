@@ -200,9 +200,9 @@ colnames(p1to7_all) <- c("nodespair", "node1", "node2", "Vessel.Line", "Vessel.L
 
 p1to7_all_long <- gather(p1to7_all, key = "feature", value = "value",
                          Vessel.Line, Vessel.Length, Vessel.Width, Vessel.Tortuosity)
-ggplot(p1to7_all_long, mapping = aes(x = value, fill = Mice.age, color = Mice.age)) + facet_wrap(.~feature, nrow = 2, scales = "free")  + geom_line(stat = "density")+theme(axis.title.x = element_blank(),legend.position = "bottom")+ guides(color=guide_legend(nrow=1,byrow=TRUE))+scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","blue","black"))
+ggplot(p1to7_all_long, mapping = aes(x = log(value), fill = Mice.age, color = Mice.age)) + facet_wrap(.~feature, nrow = 2, scales = "free")  + geom_line(stat = "density")+theme(axis.title.x = element_blank(), legend.position = "bottom")+ guides(color=guide_legend(nrow=1,byrow=TRUE))+scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","blue","black"))+ ylab("Density of log(value)")
 
-ggplot(p1to7_all_long, aes(x=Mice.age, y=value, fill=Mice.age)) + facet_wrap(.~feature, nrow = 2, scales = "free") + geom_boxplot(width = 0.8, outlier.size=0.4) +theme(axis.title.x = element_blank(),legend.position = "bottom")+  scale_x_discrete(expand=c(0.12, 0))+ scale_fill_manual(name="Mice age",values = c("red","orange","magenta","green","blue","black"))+ guides(fill=guide_legend(nrow=1,byrow=TRUE))
+ggplot(p1to7_all_long, aes(x=Mice.age, y=log(value), fill=Mice.age)) + facet_wrap(.~feature, nrow = 2, scales = "free") + geom_boxplot(width = 0.8, outlier.size=0.4) +theme(axis.title.x = element_blank(),legend.position = "bottom")+  scale_x_discrete(expand=c(0.12, 0))+ scale_fill_manual(name="Mice age",values = c("red","orange","magenta","green","blue","black"))+ guides(fill=guide_legend(nrow=1,byrow=TRUE))
 ```
 
 It seems that width variable has less variance as mouse grows.
@@ -262,7 +262,7 @@ df_long$feature <- factor(df_long$feature, levels = c("Number.of.Branchpoints",
                                                      "Distance.from.center.to.end"))
 
 feature.p <- ggplot(data=df_long, aes(x=stage, y=value, fill = stage)) +
-  geom_bar(stat="identity", width=0.8, show.legend=FALSE)  + facet_wrap(.~feature, nrow = 1, scales = "free")+theme(axis.title.x = element_blank(), strip.text = element_text(size=7.5)) + scale_fill_manual(name="Mice age", values = c("red","orange","magenta","green","blue","black"))
+  geom_bar(stat="identity", width=0.8, show.legend=FALSE)  + facet_wrap(.~feature, nrow = 1, scales = "free")+theme(axis.title.x = element_blank(), strip.text = element_text(size=7.5), panel.spacing.y = unit(1, "lines")) + scale_fill_manual(name="Mice age", values = c("red","orange","magenta","green","blue","black"))
 
 
 library(egg)
@@ -298,7 +298,7 @@ df.rate_long$feature <- factor(df.rate_long$feature, levels = c("Number.of.Branc
                                                      "Distance.from.center.to.end"))
 
 rate.p <- ggplot(data=df.rate_long, aes(x=stage, y=Increase.rate, group = 1)) +
-  geom_point(aes(colour = factor(stage))) + geom_line() + facet_wrap(.~feature, nrow = 1) + theme(axis.title.x = element_blank(), strip.text = element_text(size=7.5)) + scale_color_manual(name="Mice age", values = c("red","orange","magenta","green","blue","black"))+ scale_y_continuous(limits = c(-0.5, 1.5)) + theme(legend.position = "none")
+  geom_point(aes(colour = factor(stage))) + geom_line() + facet_wrap(.~feature, nrow = 1) + theme(axis.title.x = element_blank(), strip.text = element_text(size=7.5)) + scale_color_manual(name="Mice age", values = c("red","orange","magenta","green","blue","black"))+ scale_y_continuous(limits = c(-0.5, 1.5)) + theme(legend.position = "none",panel.spacing.y = unit(1, "lines"))
 
 
 library(egg)
