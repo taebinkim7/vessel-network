@@ -41,4 +41,12 @@ The reconstructed network is saved in `feature_extraction/feature` as `imagename
 The above code also extracts the features of the network (e.g., vessel length, branching point, vessel segment, tortuosity, etc.) and they are saved in `feature_extraction/feature` as `imagename_alldata.xlsx` and `imagename_degreedata.xlsx`.
 
 ## Vessel Network Analysis
+In this step, we reconstruct graphical structure for analyzing statistical features of blood vessel networks from the previous steps. To see the result, run
+```
+cd ../network graph
+R -e "rmarkdown::render('Network.Rmd',output_file='Network.html')"
+```
+In R markdown file, we are able to see the clustering outcomes from two different methods.
+
+
 
