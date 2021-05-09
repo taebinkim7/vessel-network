@@ -35,7 +35,7 @@ With the pretrained weights, the comparison plot of image, mask, and prediction 
 In the next step, we reconstruct a vessel network using the predicted binary images in `data/test_data/predictions`. To reconstruct a vessel network, run
 ```
 cd ../feature_extraction
-feature_extraction.py
+python feature_extraction.py
 ```
 The reconstructed network is saved in `feature_extraction/feature` as `imagename_network.png`.           
 The above code also extracts the features of the network (e.g., vessel length, branching point, vessel segment, tortuosity, etc.) and they are saved in `feature_extraction/feature` as `imagename_alldata.xlsx` and `imagename_degreedata.xlsx`.
