@@ -28,6 +28,7 @@ python test_unet.py
 You can adjust hyperparameters in both scripts but should use the same `PATCH_SIZE` and `LOG_NUM`. Pretrained weights are also available in `segmentation/ckpt_1`.
 
 With the pretrained weights, the comparison plot of image, mask, and prediction patches for the validation data looks like
+
 <img src="data/validation_data/comparison_plot.png" width="600">
 
 ## Vessel Network Reconstruction & Network Feature Extraction
