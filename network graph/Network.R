@@ -2,8 +2,10 @@ library(tidyverse)
 library(readxl)
 library(igraph)
 
+# Set up the directory
 setwd("D:/STOR893-Zhang/vessel-network/feature_extraction/feature")
 
+# Load degree data
 deg.dat.p2 = read_excel("p2-fro_degreedata.xlsx")
 deg.dat.p3 = read_excel("p3-fro_degreedata.xlsx")
 deg.dat.p4 = read_excel("p4-fro_degreedata.xlsx")
@@ -11,6 +13,15 @@ deg.dat.p5 = read_excel("p5-fro_degreedata.xlsx")
 deg.dat.p6 = read_excel("p6-fro_degreedata.xlsx")
 deg.dat.p7 = read_excel("p7-fro_degreedata.xlsx")
 
+# Load all data
+all.dat.p2 = read_excel("p2-fro_alldata.xlsx")
+all.dat.p3 = read_excel("p3-fro_alldata.xlsx")
+all.dat.p4 = read_excel("p4-fro_alldata.xlsx")
+all.dat.p5 = read_excel("p5-fro_alldata.xlsx")
+all.dat.p6 = read_excel("p6-fro_alldata.xlsx")
+all.dat.p7 = read_excel("p7-fro_alldata.xlsx")
+
+# Construct node spatial densities:
 deg_density = function(x,i){
   degree = x$degree
   deg_density = table(degree)[max(degree):1] %>%
@@ -37,6 +48,9 @@ deg_spatial_density = rbind(deg.density.p2,
                             deg.density.p6,
                             deg.density.p7)
 
+# Plot node spatial densities:
+# y = Density of branching points exceeds degree x
+# x = Number k of vessels branching out from single node
 deg_spatial_density$miceage = as.factor(deg_spatial_density$miceage)
 deg_spatial_density$degree = as.factor(deg_spatial_density$degree)
 G.spatial = ggplot(deg_spatial_density, aes(x = degree, y = density, color = miceage, group = miceage)) +
@@ -48,20 +62,9 @@ G.spatial = ggplot(deg_spatial_density, aes(x = degree, y = density, color = mic
 
 G.spatial
 
-# y = Density of branching points exceeds degree x
-# x = Number k of vessels branching out from single node
 
 
-all.dat.p2 = read_excel("p2-fro_alldata.xlsx")
-all.dat.p3 = read_excel("p3-fro_alldata.xlsx")
-all.dat.p4 = read_excel("p4-fro_alldata.xlsx")
-all.dat.p5 = read_excel("p5-fro_alldata.xlsx")
-all.dat.p6 = read_excel("p6-fro_alldata.xlsx")
-all.dat.p7 = read_excel("p7-fro_alldata.xlsx")
-all.dat.p7.x0 = read_excel("p7-x 0_alldata.xlsx")
-all.dat.N.129 = read_excel("N_129__alldata.xlsx")
-
-
+# Function for Constructing adjacency matrix:
 Adj_mat_generate = function(x){
   
   data.tmp = x
@@ -93,12 +96,13 @@ Adj_mat_generate = function(x){
       j = j+1
     }
     # Ticker: can be commentized
-    print(i)
+    # print(i)
   }
   
   return(list(Adj_mat))
 }
 
+# Construct adjacency matrices:
 p2.clean = Adj_mat_generate(all.dat.p2)
 p3.clean = Adj_mat_generate(all.dat.p3)
 p4.clean = Adj_mat_generate(all.dat.p4)
@@ -106,6 +110,7 @@ p5.clean = Adj_mat_generate(all.dat.p5)
 p6.clean = Adj_mat_generate(all.dat.p6)
 p7.clean = Adj_mat_generate(all.dat.p7)
 
+# Construct graph structure based on adjacency matrices:
 G2 = graph_from_adjacency_matrix(p2.clean[[1]],mode="undirected")
 G3 = graph_from_adjacency_matrix(p3.clean[[1]],mode="undirected")
 G4 = graph_from_adjacency_matrix(p4.clean[[1]],mode="undirected")
@@ -113,7 +118,7 @@ G5 = graph_from_adjacency_matrix(p5.clean[[1]],mode="undirected")
 G6 = graph_from_adjacency_matrix(p6.clean[[1]],mode="undirected")
 G7 = graph_from_adjacency_matrix(p7.clean[[1]],mode="undirected")
 
-# Same information as spatial density of nodes.
+# Plot degree densities:
 dt.degree.p2 = data.frame(as.data.frame(table(degree(G2))), P=rep("P2",length(table(degree(G2)))))
 dt.degree.p3 = data.frame(as.data.frame(table(degree(G3))), P=rep("P3",length(table(degree(G3)))))
 dt.degree.p4 = data.frame(as.data.frame(table(degree(G4))), P=rep("P4",length(table(degree(G4)))))
@@ -132,6 +137,7 @@ G.deg = ggplot(dt.degree, aes(y=Freq,x=factor(Deg),color=factor(P),group=factor(
           geom_point()
 G.deg
 
+# Plot graphical representation of networks:
 par(mar=c(1,1,1,1))
 par(mfrow=c(2,3))
 plot(G2,vertex.label=NA,vertex.size=1,vertex.color="red",main="P2")
@@ -150,7 +156,7 @@ Cl.betw.5 = cluster_edge_betweenness(graph=G5)
 Cl.betw.6 = cluster_edge_betweenness(graph=G6)
 Cl.betw.7 = cluster_edge_betweenness(graph=G7)
 
-# Number of groups
+# Number of groups clustered by edge betweenness:
 length(sort(unique(Cl.betw.2$membership),decreasing=FALSE))
 length(sort(unique(Cl.betw.3$membership),decreasing=FALSE))
 length(sort(unique(Cl.betw.4$membership),decreasing=FALSE))
@@ -158,7 +164,8 @@ length(sort(unique(Cl.betw.5$membership),decreasing=FALSE))
 length(sort(unique(Cl.betw.6$membership),decreasing=FALSE))
 length(sort(unique(Cl.betw.7$membership),decreasing=FALSE))
 
-# Per each group, how many members are joining
+# Plot membership distributions:
+# Count frequency. Per each group, how many members are joining
 dt.membership.p2 = data.frame(as.data.frame(table(Cl.betw.2$membership)), 
                               P=rep("P2",length(table(Cl.betw.2$membership))))
 dt.membership.p3 = data.frame(as.data.frame(table(Cl.betw.3$membership)), 
@@ -187,26 +194,8 @@ G.membership = ggplot(dt.membership, aes(y=Freq,x=factor(Membership),color=facto
   geom_point(cex=2)
 G.membership
 
-# Addtional plots for the above
-par(mar=c(5,5,5,5))
-plot(table(Cl.betw.2$membership))
-plot(table(Cl.betw.3$membership))
-plot(table(Cl.betw.4$membership))
-plot(table(Cl.betw.5$membership))
-plot(table(Cl.betw.6$membership))
-plot(table(Cl.betw.7$membership))
 
-
-# Final plots after clustering
-par(mar=c(0,0,0,0))
-plot(Cl.betw.2,G2,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.3,G3,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.4,G4,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.5,G5,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.6,G6,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.7,G7,vertex.label=NA,vertex.size=1) 
-
-# Run clustering by edge betweenness:
+# Run clustering by louvain:
 Cl.louvain.2 = cluster_louvain(graph=G2)
 Cl.louvain.3 = cluster_louvain(graph=G3)
 Cl.louvain.4 = cluster_louvain(graph=G4)
@@ -214,7 +203,7 @@ Cl.louvain.5 = cluster_louvain(graph=G5)
 Cl.louvain.6 = cluster_louvain(graph=G6)
 Cl.louvain.7 = cluster_louvain(graph=G7)
 
-# Number of groups
+# Number of groups clustered by louvain:
 length(sort(unique(Cl.louvain.2$membership),decreasing=FALSE))
 length(sort(unique(Cl.louvain.3$membership),decreasing=FALSE))
 length(sort(unique(Cl.louvain.4$membership),decreasing=FALSE))
@@ -222,7 +211,8 @@ length(sort(unique(Cl.louvain.5$membership),decreasing=FALSE))
 length(sort(unique(Cl.louvain.6$membership),decreasing=FALSE))
 length(sort(unique(Cl.louvain.7$membership),decreasing=FALSE))
 
-# Per each group, how many members are joining
+# Plot membership distributions:
+# Count frequency. Per each group, how many members are joining
 dt.membership.louvain.p2 = data.frame(as.data.frame(table(Cl.louvain.2$membership)), 
                               P=rep("P2",length(table(Cl.louvain.2$membership))))
 dt.membership.louvain.p3 = data.frame(as.data.frame(table(Cl.louvain.3$membership)), 
@@ -251,56 +241,8 @@ G.membership.louvain = ggplot(dt.membership.louvain, aes(y=Freq,x=factor(Members
   geom_point(cex=2)
 G.membership.louvain
 
-# Addtional plots for the above
-par(mar=c(5,5,5,5))
-plot(table(Cl.louvain.2$membership))
-plot(table(Cl.louvain.3$membership))
-plot(table(Cl.louvain.4$membership))
-plot(table(Cl.louvain.5$membership))
-plot(table(Cl.louvain.6$membership))
-plot(table(Cl.louvain.7$membership))
-
-
-# Final plots after clustering
-par(mar=c(0,0,0,0))
-plot(Cl.louvain.2,G2,vertex.label=NA,vertex.size=1) 
-plot(Cl.louvain.3,G3,vertex.label=NA,vertex.size=1) 
-plot(Cl.louvain.4,G4,vertex.label=NA,vertex.size=1) 
-plot(Cl.louvain.5,G5,vertex.label=NA,vertex.size=1) 
-plot(Cl.louvain.6,G6,vertex.label=NA,vertex.size=1) 
-plot(Cl.louvain.7,G7,vertex.label=NA,vertex.size=1) 
-
-
-###################################################################
-
-set.seed(1234)
-dt.resample.p2 = sample(x=deg.dat.p2$nodes,size=length(deg.dat.p2$nodes),prob=deg.dat.p2$degree/sum(deg.dat.p2$degree),replace=TRUE)
-dt.resample.p3 = sample(x=deg.dat.p3$nodes,size=length(deg.dat.p3$nodes),prob=deg.dat.p3$degree/sum(deg.dat.p3$degree),replace=TRUE)
-dt.resample.p4 = sample(x=deg.dat.p4$nodes,size=length(deg.dat.p4$nodes),prob=deg.dat.p4$degree/sum(deg.dat.p4$degree),replace=TRUE)
-dt.resample.p5 = sample(x=deg.dat.p5$nodes,size=length(deg.dat.p5$nodes),prob=deg.dat.p5$degree/sum(deg.dat.p5$degree),replace=TRUE)
-dt.resample.p6 = sample(x=deg.dat.p6$nodes,size=length(deg.dat.p6$nodes),prob=deg.dat.p6$degree/sum(deg.dat.p6$degree),replace=TRUE)
-dt.resample.p7 = sample(x=deg.dat.p7$nodes,size=length(deg.dat.p7$nodes),prob=deg.dat.p7$degree/sum(deg.dat.p7$degree),replace=TRUE)
-
-plot(table(dt.resample.p2))
-plot(table(dt.resample.p3))
-plot(table(dt.resample.p4))
-plot(table(dt.resample.p5))
-plot(table(dt.resample.p6))
-plot(table(dt.resample.p7))
-
-
-###################################################################
 
 setwd("D:/STOR893-Zhang/vessel-network/network graph/")
 save.image("Data.basic.network.RData")
 
-
-# Cluster_walktrap = cluster_walktrap(graph=G)
-# Cluster_louvain = cluster_louvain(graph=G)
-# sort(unique(Cluster_walktrap$membership),decreasing=FALSE)
-# sort(unique(Cluster_louvain$membership),decreasing=FALSE)
-# plot(table(Cluster_walktrap$membership))
-# plot(table(Cluster_louvain$membership))
-# plot(Cluster_walktrap,G,vertex.label=NA,vertex.size=5)
-# plot(Cluster_louvain,G,vertex.label=NA,vertex.size=5) 
 

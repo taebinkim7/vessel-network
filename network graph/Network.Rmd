@@ -22,13 +22,23 @@ deg.dat.p5 = read_excel("p5-fro_degreedata.xlsx")
 deg.dat.p6 = read_excel("p6-fro_degreedata.xlsx")
 deg.dat.p7 = read_excel("p7-fro_degreedata.xlsx")
 
+all.dat.p2 = read_excel("p2-fro_alldata.xlsx")
+all.dat.p3 = read_excel("p3-fro_alldata.xlsx")
+all.dat.p4 = read_excel("p4-fro_alldata.xlsx")
+all.dat.p5 = read_excel("p5-fro_alldata.xlsx")
+all.dat.p6 = read_excel("p6-fro_alldata.xlsx")
+all.dat.p7 = read_excel("p7-fro_alldata.xlsx")
+```
+
+Let's construct node spatial densities by following function.
+```{r}
 deg_density = function(x,i){
   degree = x$degree
   deg_density = table(degree)[max(degree):1] %>%
     prop.table() %>%
     cumsum() %>%
     rev()
-  dt.frame = data.frame(miceage = rep(paste0("p",i,sep=""),max(degree)),
+  dt.frame = data.frame(miceage = rep(paste0("P",i,sep=""),max(degree)),
                         degree = 1:max(degree), 
                         density = deg_density)
   
@@ -47,27 +57,27 @@ deg_spatial_density = rbind(deg.density.p2,
                             deg.density.p5,
                             deg.density.p6,
                             deg.density.p7)
+```
 
+
+Plot node spatial densities. $y-$axis stands for the density of branching points exceeds degree $x$, which is the number $k$ of vessels branching out from the single node.
+```{r}
 deg_spatial_density$miceage = as.factor(deg_spatial_density$miceage)
 deg_spatial_density$degree = as.factor(deg_spatial_density$degree)
-ggplot(deg_spatial_density, aes(x = degree, y = density, color = miceage, group = miceage)) +
+G.spatial = ggplot(deg_spatial_density, aes(x = degree, y = density, color = miceage, group = miceage)) +
   geom_line() +
   geom_point() +
-  labs(x = "Number k of vessels branching out for one node",
-       y = "% of branching points with node density >= k") +
-  scale_color_discrete("Mice age")
+  labs(x = "Degree",
+       y = "Node spatial density") +
+  scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","blue","black"))
+
+G.spatial
 ```
 
 The question is why the degree of spatial density at P4 is lower than the others. We can make a conjecture that at postnatal day 4, there is something happen at the retina of the small mouse. 
 
-First, define the function to construct adjacency matrices of P2 through P7: This work is time consuming. Just call the data set that I stored in advance.
-
+First, define the function to construct adjacency matrices of P2 through P7. Here is the function for Constructing adjacency matrix:
 ```{r}
-load("D:/STOR893-Zhang/vessel-network/network graph/Data.basic.network.RData")
-```
-
-By changing eval=FALSE to eval=TRUE, you can run the function.
-```{r, eval = FALSE}
 Adj_mat_generate = function(x){
   
   data.tmp = x
@@ -88,21 +98,26 @@ Adj_mat_generate = function(x){
         Adj_mat[i,j] = 0
       }
       else{
+        
         key.from = identified_nodes_key[i]
         key.to = identified_nodes_key[j]
         
         Adj_mat[i,j] = length(node1[which(node1 == key.from & node2 == key.to)])
         Adj_mat[j,i] = Adj_mat[i,j]
+        
       }
       j = j+1
     }
     # Ticker: can be commentized
-    print(i)
+    # print(i)
   }
   
-  return(list(Adj_mat,weight_line,weight_length,weight_width,weight_tortuosity))
+  return(list(Adj_mat))
 }
+```
 
+By using the function above, we can construct adjacency matrices.
+```{r}
 p2.clean = Adj_mat_generate(all.dat.p2)
 p3.clean = Adj_mat_generate(all.dat.p3)
 p4.clean = Adj_mat_generate(all.dat.p4)
@@ -111,7 +126,7 @@ p6.clean = Adj_mat_generate(all.dat.p6)
 p7.clean = Adj_mat_generate(all.dat.p7)
 ```
 
-Next, construct the graphs by:
+Next, Construct the graph structurse based on adjacency matrices by
 ```{r}
 G2 = graph_from_adjacency_matrix(p2.clean[[1]],mode="undirected")
 G3 = graph_from_adjacency_matrix(p3.clean[[1]],mode="undirected")
@@ -121,14 +136,14 @@ G6 = graph_from_adjacency_matrix(p6.clean[[1]],mode="undirected")
 G7 = graph_from_adjacency_matrix(p7.clean[[1]],mode="undirected")
 ```
 
-Note that the plot below has the same information but is drawn in different way.
+Note that the plot below has the same information but is drawn in different way. Plot degree densities are following.
 ```{r}
-dt.degree.p2 = data.frame(as.data.frame(table(degree(G2))), P=rep(2,length(table(degree(G2)))))
-dt.degree.p3 = data.frame(as.data.frame(table(degree(G3))), P=rep(3,length(table(degree(G3)))))
-dt.degree.p4 = data.frame(as.data.frame(table(degree(G4))), P=rep(4,length(table(degree(G4)))))
-dt.degree.p5 = data.frame(as.data.frame(table(degree(G5))), P=rep(5,length(table(degree(G5)))))
-dt.degree.p6 = data.frame(as.data.frame(table(degree(G6))), P=rep(6,length(table(degree(G6)))))
-dt.degree.p7 = data.frame(as.data.frame(table(degree(G7))), P=rep(7,length(table(degree(G7)))))
+dt.degree.p2 = data.frame(as.data.frame(table(degree(G2))), P=rep("P2",length(table(degree(G2)))))
+dt.degree.p3 = data.frame(as.data.frame(table(degree(G3))), P=rep("P3",length(table(degree(G3)))))
+dt.degree.p4 = data.frame(as.data.frame(table(degree(G4))), P=rep("P4",length(table(degree(G4)))))
+dt.degree.p5 = data.frame(as.data.frame(table(degree(G5))), P=rep("P5",length(table(degree(G5)))))
+dt.degree.p6 = data.frame(as.data.frame(table(degree(G6))), P=rep("P6",length(table(degree(G6)))))
+dt.degree.p7 = data.frame(as.data.frame(table(degree(G7))), P=rep("P7",length(table(degree(G7)))))
 dt.degree = rbind(dt.degree.p2,dt.degree.p3,dt.degree.p4,dt.degree.p5,dt.degree.p6,dt.degree.p7)
 names(dt.degree) = c("Deg","Freq","P")
 
@@ -136,23 +151,25 @@ names(dt.degree) = c("Deg","Freq","P")
 G.deg = ggplot(dt.degree, aes(y=Freq,x=factor(Deg),color=factor(P),group=factor(P))) +
           ylab("Frequency") +
           scale_x_discrete(name ="Degree", limits=c("0","1","2","3","4","5","6","7","8","9","10")) + 
-          scale_color_discrete(name="P") +
-          geom_line(cex=1)
+          scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","blue","black")) +
+          geom_line()+
+          geom_point()
 G.deg
 ```
 
-Here are the graph plots before clustering. From P4, we can see the shape of graph does change a lot.
+Here are the graph plots before clustering. From P4, we can see the shape of graph does change a lot. Next, plot graphical representation of networks:
 ```{r}
-par(mar=c(0,0,0,0))
-plot(G2,vertex.label=NA,vertex.size=1,vertex.color="grey2")
-plot(G3,vertex.label=NA,vertex.size=1,vertex.color="grey3")
-plot(G4,vertex.label=NA,vertex.size=1,vertex.color="grey4")
-plot(G5,vertex.label=NA,vertex.size=1,vertex.color="grey5")
-plot(G6,vertex.label=NA,vertex.size=1,vertex.color="grey6")
-plot(G7,vertex.label=NA,vertex.size=1,vertex.color="grey7")
+par(mar=c(1,1,1,1))
+par(mfrow=c(2,3))
+plot(G2,vertex.label=NA,vertex.size=1,vertex.color="red",main="P2")
+plot(G3,vertex.label=NA,vertex.size=1,vertex.color="orange",main="P3")
+plot(G4,vertex.label=NA,vertex.size=1,vertex.color="magenta",main="P4")
+plot(G5,vertex.label=NA,vertex.size=1,vertex.color="green",main="P5")
+plot(G6,vertex.label=NA,vertex.size=1,vertex.color="blue",main="P6")
+plot(G7,vertex.label=NA,vertex.size=1,vertex.color="black",main="P7")
 ```
 
-We run clustering by using edge betweenness. As we can see, at P4, there are explosively many groups appearing.
+We run clustering by using edge betweenness. As we can see by checking the number of groups clustered by edge betweenness, there are explosively many groups appearing at P4.
 ```{r}
 Cl.betw.2 = cluster_edge_betweenness(graph=G2)
 Cl.betw.3 = cluster_edge_betweenness(graph=G3)
@@ -172,17 +189,17 @@ length(sort(unique(Cl.betw.7$membership),decreasing=FALSE))
 We can check that for each $P$, how many members are joining into a single membership. We can observe that the membership status are similar between $P2,P3$ and $P4$ while $P5,P6$, and $P7$ have similarity by themselves but show difference from the previous ones.
 ```{r}
 dt.membership.p2 = data.frame(as.data.frame(table(Cl.betw.2$membership)), 
-                              P=rep(2,length(table(Cl.betw.2$membership))))
+                              P=rep("P2",length(table(Cl.betw.2$membership))))
 dt.membership.p3 = data.frame(as.data.frame(table(Cl.betw.3$membership)), 
-                              P=rep(3,length(table(Cl.betw.3$membership))))
+                              P=rep("P3",length(table(Cl.betw.3$membership))))
 dt.membership.p4 = data.frame(as.data.frame(table(Cl.betw.4$membership)), 
-                              P=rep(4,length(table(Cl.betw.4$membership))))
+                              P=rep("P4",length(table(Cl.betw.4$membership))))
 dt.membership.p5 = data.frame(as.data.frame(table(Cl.betw.5$membership)), 
-                              P=rep(5,length(table(Cl.betw.5$membership))))
+                              P=rep("P5",length(table(Cl.betw.5$membership))))
 dt.membership.p6 = data.frame(as.data.frame(table(Cl.betw.6$membership)), 
-                              P=rep(6,length(table(Cl.betw.6$membership))))
+                              P=rep("P6",length(table(Cl.betw.6$membership))))
 dt.membership.p7 = data.frame(as.data.frame(table(Cl.betw.7$membership)), 
-                              P=rep(7,length(table(Cl.betw.7$membership))))
+                              P=rep("P7",length(table(Cl.betw.7$membership))))
 dt.membership = rbind(dt.membership.p2,
                       dt.membership.p3,
                       dt.membership.p4,
@@ -195,20 +212,58 @@ G.membership = ggplot(dt.membership, aes(y=Freq,x=factor(Membership),color=facto
   scale_x_discrete(breaks=seq(1,190,10))+
   ylab("Frequency") +
   xlab("Membership") + 
-  scale_color_manual(name="P",values=c("red","orange","pink","green","black","blue")) +
-  geom_point(cex=1)
+  scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","black","blue")) +
+  geom_point(cex=2)
 G.membership
 ```
 
-Here are the final plots after clustering. As we can see, from P4, we can see the dramatic change of the form of the plot.
+We do another clustering by louvain to secure the guaranteeness that all clustering results lead us to the same observation. The below code is for checking the number of groups clustered by louvain:
 ```{r}
-par(mar=c(0,0,0,0))
-plot(Cl.betw.2,G2,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.3,G3,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.4,G4,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.5,G5,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.6,G6,vertex.label=NA,vertex.size=1) 
-plot(Cl.betw.7,G7,vertex.label=NA,vertex.size=1) 
+Cl.louvain.2 = cluster_louvain(graph=G2)
+Cl.louvain.3 = cluster_louvain(graph=G3)
+Cl.louvain.4 = cluster_louvain(graph=G4)
+Cl.louvain.5 = cluster_louvain(graph=G5)
+Cl.louvain.6 = cluster_louvain(graph=G6)
+Cl.louvain.7 = cluster_louvain(graph=G7)
+
+# Number of groups clustered by louvain:
+length(sort(unique(Cl.louvain.2$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.3$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.4$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.5$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.6$membership),decreasing=FALSE))
+length(sort(unique(Cl.louvain.7$membership),decreasing=FALSE))
 ```
 
-Hence, we can visually find the "change point". Next question: how to find this by statistical hypothesis testing?
+Finally, we do plotting membership distributions from the louvain clustering.
+```{r}
+dt.membership.louvain.p2 = data.frame(as.data.frame(table(Cl.louvain.2$membership)), 
+                              P=rep("P2",length(table(Cl.louvain.2$membership))))
+dt.membership.louvain.p3 = data.frame(as.data.frame(table(Cl.louvain.3$membership)), 
+                              P=rep("P3",length(table(Cl.louvain.3$membership))))
+dt.membership.louvain.p4 = data.frame(as.data.frame(table(Cl.louvain.4$membership)), 
+                              P=rep("P4",length(table(Cl.louvain.4$membership))))
+dt.membership.louvain.p5 = data.frame(as.data.frame(table(Cl.louvain.5$membership)), 
+                              P=rep("P5",length(table(Cl.louvain.5$membership))))
+dt.membership.louvain.p6 = data.frame(as.data.frame(table(Cl.louvain.6$membership)), 
+                              P=rep("P6",length(table(Cl.louvain.6$membership))))
+dt.membership.louvain.p7 = data.frame(as.data.frame(table(Cl.louvain.7$membership)), 
+                              P=rep("P7",length(table(Cl.louvain.7$membership))))
+dt.membership.louvain = rbind(dt.membership.louvain.p2,
+                      dt.membership.louvain.p3,
+                      dt.membership.louvain.p4,
+                      dt.membership.louvain.p5,
+                      dt.membership.louvain.p6,
+                      dt.membership.louvain.p7)
+names(dt.membership.louvain) = c("Membership","Freq","P")
+
+G.membership.louvain = ggplot(dt.membership.louvain, aes(y=Freq,x=factor(Membership),color=factor(P))) +
+  scale_x_discrete(breaks=seq(1,190,10))+
+  ylab("Frequency") +
+  xlab("Membership") + 
+  scale_color_manual(name="Mice age",values=c("red","orange","magenta","green","black","blue")) +
+  geom_point(cex=2)
+G.membership.louvain
+```
+
+The two results show the same consequences. Hence, we can visually find the "change point".
