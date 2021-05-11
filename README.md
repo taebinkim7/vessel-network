@@ -40,6 +40,14 @@ python feature_extraction.py
 The reconstructed network is saved in `feature_extraction/feature` as `imagename_network.png`.           
 The above code also extracts the features of the network (e.g., vessel length, branching point, vessel segment, tortuosity, etc.) and they are saved in `feature_extraction/feature` as `imagename_alldata.xlsx` and `imagename_degreedata.xlsx`.
 
+After network feature extraction, we implement some visualization analysis for these features. To see the result, run
+```
+cd ../feature_extraction
+Rscript -e "rmarkdown::render('feature.Rmd',output_file='feature.html')"
+```
+We can see the density plot, boxplot, barplot and plot for increasing rate for different features.
+
+
 ## Vessel Network Analysis
 In this step, we reconstruct graphical structure for analyzing statistical features of blood vessel networks from the previous steps. To see the result, run
 ```
