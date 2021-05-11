@@ -42,7 +42,6 @@ The above code also extracts the features of the network (e.g., vessel length, b
 
 After network feature extraction, we implement some visualization analysis for these features. To see the result, run
 ```
-cd ../feature_extraction
 Rscript -e "rmarkdown::render('feature.Rmd',output_file='feature.html')"
 ```
 We can see the density plot, boxplot, barplot and plot for increasing rate for different features.
