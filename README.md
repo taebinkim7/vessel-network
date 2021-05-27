@@ -1,6 +1,6 @@
 # Blood Vessel Network Analysis
 
-This repository is created to implement a blood vessel network analysis.
+We implement a blood vessel network analysis in this repository.
 
 ## Setup
 Using python 3.7.2, (e.g., `conda create -n vessel-network python=3.7.2`, then `conda activate vessel-network`) install the required packages by running 
